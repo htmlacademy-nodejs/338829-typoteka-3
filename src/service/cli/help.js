@@ -1,5 +1,6 @@
 'use strict';
 
+const chalk = require(`chalk`);
 const {
   CliCommand,
   MOCK_FILE_NAME
@@ -20,6 +21,6 @@ const helpText = `
 module.exports = {
   name: CliCommand.HELP,
   run() {
-    console.info(helpText);
+    console.info(chalk.grey(helpText));
   }
 };

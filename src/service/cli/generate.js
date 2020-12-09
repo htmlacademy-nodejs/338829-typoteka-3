@@ -1,6 +1,7 @@
 'use strict';
 
-const fs = require(`fs`);
+const chalk = require(`chalk`);
+const fs = require(`fs`).promises;
 
 const {
   CliCommand,
@@ -40,14 +41,13 @@ const generatePost = (count) => {
 };
 
 const whitePost = async (posts) => {
-  fs.writeFile(MOCK_FILE_NAME, JSON.stringify(posts), (err) => {
-    if (err) {
-      console.info(`Ошибка при создании данных`);
-      process.exit(ExitCode.FATAL_EXCEPTION);
-    }
-
-    console.info(`Данные в количестве [${posts.length}] успешно сформированы в файл ${MOCK_FILE_NAME}`);
-  });
+  try {
+    await fs.writeFile(MOCK_FILE_NAME, JSON.stringify(posts));
+    console.info(chalk.green(`Данные в количестве [${posts.length}] успешно сформированы в файл ${MOCK_FILE_NAME}`));
+  } catch (error) {
+    console.info(chalk.red(`Ошибка при создании данных`));
+    process.exit(ExitCode.FATAL_EXCEPTION);
+  }
 };
 
 module.exports = {
@@ -58,7 +58,7 @@ module.exports = {
     const countPosts = count && count > 0 ? count : DEFAULT_GENERATE_COUNT;
 
     if (countPosts > MAX_MOCK_ITEMS) {
-      console.info(`Не больше ${MAX_MOCK_ITEMS} объявлений`);
+      console.info(chalk.red(`Не больше ${MAX_MOCK_ITEMS} объявлений`));
       return;
     }
 
