@@ -3,7 +3,7 @@
 const chalk = require(`chalk`);
 const {
   CliCommand,
-  MOCK_FILE_NAME
+  FILE_MOCK_PATH
 } = require(`../../constans`);
 
 const helpText = `
@@ -15,7 +15,7 @@ const helpText = `
     Команды:
     ${CliCommand.VERSION}:            выводит номер версии
     ${CliCommand.HELP}:               печатает этот текст
-    ${CliCommand.GENERATE} <count>    формирует файл ${MOCK_FILE_NAME}
+    ${CliCommand.GENERATE} <count>    формирует файл ${FILE_MOCK_PATH}
 `;
 
 module.exports = {
