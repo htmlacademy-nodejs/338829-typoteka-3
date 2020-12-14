@@ -20,7 +20,8 @@ const {
 const {
   getRandomInt,
   shuffle,
-  formatDate
+  formatDate,
+  checkNumParam
 } = require(`../../utils`);
 
 const getRandomDate = () => {
@@ -64,8 +65,7 @@ module.exports = {
   name: CliCommand.GENERATE,
   async run(args = []) {
     const [userCount] = args;
-    const count = Number.parseInt(userCount, 10);
-    const countPosts = count && count > 0 ? count : DEFAULT_GENERATE_COUNT;
+    const countPosts = checkNumParam(userCount, DEFAULT_GENERATE_COUNT);
 
     if (countPosts > MAX_MOCK_ITEMS) {
       console.info(chalk.red(`Не больше ${MAX_MOCK_ITEMS} объявлений`));

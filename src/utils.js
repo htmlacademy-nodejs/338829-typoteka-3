@@ -19,8 +19,14 @@ const formatDate = (dateMs) => {
   return new Date(dateMs).toISOString().split(`T`).join(` `).slice(0, 19);
 };
 
+const checkNumParam = (value, defaultValue) => {
+  const valueNum = Number.parseInt(value, 10);
+  return valueNum && valueNum > 0 ? valueNum : defaultValue;
+};
+
 module.exports = {
   getRandomInt,
   shuffle,
-  formatDate
+  formatDate,
+  checkNumParam
 };
