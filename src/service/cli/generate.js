@@ -15,7 +15,7 @@ const {
   DATE_INTERVAL,
   SentencesRestrict,
   ExitCode
-} = require(`../../constans`);
+} = require(`../../constants`);
 
 const {
   getRandomInt,

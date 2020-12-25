@@ -2,7 +2,7 @@
 
 const fs = require(`fs/promises`);
 const {Router} = require(`express`);
-const {FILE_MOCK_PATH} = require(`../../constans`);
+const {FILE_MOCK_PATH} = require(`../../constants`);
 
 const postRouter = new Router();
 postRouter.get(`/`, async (req, res) => {
