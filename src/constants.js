@@ -10,14 +10,22 @@ const FILE_MOCK_PATH = `mocks.json`;
 const FILE_SENTENCES_PATH = `./data/sentences.txt`;
 const FILE_TITLES_PATH = `./data/titles.txt`;
 const FILE_CATEGORIES_PATH = `./data/categories.txt`;
+const FILE_COMMENTS_PATH = `./data/comments.txt`;
 
 const MAX_MOCK_ITEMS = 1000;
+const MAX_ID_LENGTH = 6;
+const MAX_COMMENTS = 8;
 const DAY_MS = 1000 * 60 * 60 * 24;
 const DATE_INTERVAL = 91;
 
 const SentencesRestrict = {
   MIN: 1,
   MAX: 5,
+};
+
+const CommentsRestrict = {
+  MIN: 1,
+  MAX: 4,
 };
 
 const CliCommand = {
@@ -52,10 +60,14 @@ module.exports = {
   FILE_SENTENCES_PATH,
   FILE_TITLES_PATH,
   FILE_CATEGORIES_PATH,
+  FILE_COMMENTS_PATH,
   MAX_MOCK_ITEMS,
+  MAX_ID_LENGTH,
+  MAX_COMMENTS,
   DAY_MS,
   DATE_INTERVAL,
   SentencesRestrict,
+  CommentsRestrict,
   CliCommand,
   ExitCode,
   HttpCode
