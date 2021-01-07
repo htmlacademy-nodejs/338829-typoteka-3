@@ -2,10 +2,11 @@
 
 const chalk = require(`chalk`);
 const express = require(`express`);
-const postRouter = require(`../routes/posts`);
+const routes = require(`../api`);
 
 const {
   DEFAULT_PORT,
+  API_PREFIX,
   CliCommand,
   HttpCode
 } = require(`../../constants`);
@@ -15,7 +16,7 @@ const {checkNumParam} = require(`../../utils`);
 const startHttpServer = (port) => {
   const app = express();
   app.use(express.json());
-  app.use(`/posts`, postRouter);
+  app.use(API_PREFIX, routes);
 
   app.use((req, res) => {
     res.status(HttpCode.NOT_FOUND).send(`Not found`);

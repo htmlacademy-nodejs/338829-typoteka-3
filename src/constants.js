@@ -18,6 +18,8 @@ const MAX_COMMENTS = 8;
 const DAY_MS = 1000 * 60 * 60 * 24;
 const DATE_INTERVAL = 91;
 
+const API_PREFIX = `/api`;
+
 const SentencesRestrict = {
   MIN: 1,
   MAX: 5,
@@ -66,6 +68,7 @@ module.exports = {
   MAX_COMMENTS,
   DAY_MS,
   DATE_INTERVAL,
+  API_PREFIX,
   SentencesRestrict,
   CommentsRestrict,
   CliCommand,
