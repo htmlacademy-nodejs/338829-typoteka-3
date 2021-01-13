@@ -1,14 +1,14 @@
 'use strict';
 
 class CategoryService {
-  constructor(posts) {
-    this._posts = posts;
+  constructor(articles) {
+    this._articles = articles;
   }
 
   findAll() {
     const categories = new Set();
-    this._posts.forEach((post) => {
-      post.сategory.forEach((category) => {
+    this._articles.forEach((article) => {
+      article.сategory.forEach((category) => {
         categories.add(category);
       });
     });

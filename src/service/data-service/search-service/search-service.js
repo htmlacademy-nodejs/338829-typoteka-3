@@ -1,13 +1,13 @@
 'use strict';
 
 class SearchService {
-  constructor(posts) {
-    this._posts = posts;
+  constructor(articles) {
+    this._articles = articles;
   }
 
   filter(queryValue) {
     const pattern = new RegExp(queryValue, `gi`);
-    return this._posts.filter((post) => post.title.match(pattern));
+    return this._articles.filter((article) => article.title.match(pattern));
   }
 }
 
