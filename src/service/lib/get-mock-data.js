@@ -14,7 +14,6 @@ const getMockData = async () => {
     const fileContent = await fs.readFile(FILE_MOCK_PATH, `utf-8`);
     mockData = JSON.parse(fileContent);
   } catch (err) {
-    console.error(err);
     mockData = [];
   }
 
