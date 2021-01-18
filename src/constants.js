@@ -11,6 +11,7 @@ const FILE_SENTENCES_PATH = `./data/sentences.txt`;
 const FILE_TITLES_PATH = `./data/titles.txt`;
 const FILE_CATEGORIES_PATH = `./data/categories.txt`;
 const FILE_COMMENTS_PATH = `./data/comments.txt`;
+const FILE_API_LOG_PATH = `./src/service/logs/api.log`;
 
 const MAX_MOCK_ITEMS = 1000;
 const MAX_ID_LENGTH = 6;
@@ -51,6 +52,18 @@ const HttpCode = {
   NOT_FOUND: 404,
   INTERNAL_SERVER_ERROR: 500
 };
+
+const LogLevel = {
+  INFO: `info`,
+  ERROR: `error`,
+  DEBUG: `debug`
+};
+
+const NodeEnv = {
+  DEVELOPMENT: `development`,
+  PRODUCTION: `production`
+};
+
 const DEFAULT_CLI_COMMAND = CliCommand.HELP;
 
 module.exports = {
@@ -65,6 +78,7 @@ module.exports = {
   FILE_TITLES_PATH,
   FILE_CATEGORIES_PATH,
   FILE_COMMENTS_PATH,
+  FILE_API_LOG_PATH,
   MAX_MOCK_ITEMS,
   MAX_ID_LENGTH,
   MAX_COMMENTS,
@@ -75,5 +89,7 @@ module.exports = {
   CommentsRestrict,
   CliCommand,
   ExitCode,
-  HttpCode
+  HttpCode,
+  LogLevel,
+  NodeEnv
 };
