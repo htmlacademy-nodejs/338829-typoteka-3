@@ -51,11 +51,12 @@ const createApp = () => {
 };
 
 describe(`READ: API articles`, () => {
-  const app = createApp();
+  let app;
   let response;
 
   describe(`correctly`, () => {
     beforeAll(async () => {
+      app = createApp();
       response = await request(app).get(`/articles`);
     });
 
@@ -74,8 +75,12 @@ describe(`READ: API articles`, () => {
 });
 
 describe(`READ: API article`, () => {
-  const app = createApp();
+  let app;
   let response;
+
+  beforeAll(() => {
+    app = createApp();
+  });
 
   describe(`Correctly: with given id`, () => {
     beforeAll(async () => {
@@ -111,15 +116,19 @@ describe(`READ: API article`, () => {
 });
 
 describe(`CREATE: API article`, () => {
-  const app = createApp();
+  let app;
   let response;
+  let newArticle;
 
-  const newArticle = {
-    "title": `Руководство для начинающих`,
-    "createdDate": `2020-12-14 08:25:41`,
-    "category": [`Разное`],
-    "announce": `Как говорится, утром деньги – вечером стулья`
-  };
+  beforeAll(() => {
+    app = createApp();
+    newArticle = {
+      "title": `Руководство для начинающих`,
+      "createdDate": `2020-12-14 08:25:41`,
+      "category": [`Разное`],
+      "announce": `Как говорится, утром деньги – вечером стулья`
+    };
+  });
 
   describe(`Correctly`, () => {
     beforeAll(async () => {
@@ -160,15 +169,19 @@ describe(`CREATE: API article`, () => {
 });
 
 describe(`UPDATE: API article`, () => {
-  const app = createApp();
+  let app;
   let response;
+  let updateArticle;
 
-  const updateArticle = {
-    "title": `Руководство для начинающих`,
-    "createdDate": `2020-12-14 08:25:41`,
-    "category": [`Разное`],
-    "announce": `Как говорится, утром деньги – вечером стулья`
-  };
+  beforeAll(() => {
+    app = createApp();
+    updateArticle = {
+      "title": `Руководство для начинающих`,
+      "createdDate": `2020-12-14 08:25:41`,
+      "category": [`Разное`],
+      "announce": `Как говорится, утром деньги – вечером стулья`
+    };
+  });
 
   describe(`Correctly`, () => {
     beforeAll(async () => {
@@ -210,12 +223,16 @@ describe(`UPDATE: API article`, () => {
 });
 
 describe(`DELETE: API article`, () => {
-  const app = createApp();
-  const articleId = `dGbyKl`;
+  let app;
   let response;
+
+  beforeAll(() => {
+    app = createApp();
+  });
 
   describe(`Correctly`, () => {
     beforeAll(async () => {
+      const articleId = `dGbyKl`;
       response = await request(app).delete(`/articles/${articleId}`);
     });
 
@@ -238,12 +255,16 @@ describe(`DELETE: API article`, () => {
 });
 
 describe(`READ: API comments`, () => {
-  const app = createApp();
-  const articleId = `dGbyKl`;
+  let app;
   let response;
+
+  beforeAll(() => {
+    app = createApp();
+  });
 
   describe(`Correctly`, () => {
     beforeAll(async () => {
+      const articleId = `dGbyKl`;
       response = await request(app).get(`/articles/${articleId}/comments`);
     });
 
@@ -272,16 +293,23 @@ describe(`READ: API comments`, () => {
 });
 
 describe(`CREATE: API comments`, () => {
-  const app = createApp();
-  const articleId = `dGbyKl`;
-  const newComment = {
-    text: `Мне не нравится ваш стиль`
-  };
-
+  let app;
   let response;
+  let articleId;
+
+  beforeAll(() => {
+    app = createApp();
+    articleId = `dGbyKl`;
+  });
 
   describe(`Correctly`, () => {
+    let newComment;
+
     beforeAll(async () => {
+      newComment = {
+        text: `Мне не нравится ваш стиль`
+      };
+
       response = await request(app)
         .post(`/articles/${articleId}/comments`)
         .send(newComment);
@@ -323,11 +351,16 @@ describe(`CREATE: API comments`, () => {
 });
 
 describe(`DELETE: API comments`, () => {
-  const app = createApp();
-  const articleId = `dGbyKl`;
-  const commentId = `L87kUq`;
-
+  let app;
   let response;
+  let articleId;
+  let commentId;
+
+  beforeAll(() => {
+    app = createApp();
+    articleId = `dGbyKl`;
+    commentId = `L87kUq`;
+  });
 
   describe(`Correctly`, () => {
     beforeAll(async () => {
