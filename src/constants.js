@@ -20,6 +20,7 @@ const DAY_MS = 1000 * 60 * 60 * 24;
 const DATE_INTERVAL = 91;
 
 const API_PREFIX = `/api`;
+const API_TIMEOUT = 1000;
 
 const SentencesRestrict = {
   MIN: 1,
@@ -85,6 +86,7 @@ module.exports = {
   DAY_MS,
   DATE_INTERVAL,
   API_PREFIX,
+  API_TIMEOUT,
   SentencesRestrict,
   CommentsRestrict,
   CliCommand,

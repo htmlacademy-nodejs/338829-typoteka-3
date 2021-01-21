@@ -10,7 +10,15 @@ block content
           .search.search-page__form
             form(action='#' method='get')
               label
-                input(type='text' placeholder='Что ищем?')
+                input(type='text' name='search' placeholder='Что ищем?')
               button.search__button.button.button--transparent(type='submit') Найти
+            if articles.length > 0
+              each article in articles
+                .search__result
+                  time.search__date(datetime=article.createdDate) #{article.createdDate}
+                  a.search__link.
+                    #{article.title}
+          if articles.length === 0
+            p.search-page__empty Ничего не нашлось
     footer.footer
       include ../partials/footer
