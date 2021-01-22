@@ -21,7 +21,7 @@ myRouter.get(`/comments`, async (req, res) => {
       comments.push({
         articleId: article.id,
         articleTitle: article.title,
-        createdDate: article.createdDate,
+        createdDate: `2019-03-21T20:33`,
         author: `Александр Петров`,
         ...comment
       });

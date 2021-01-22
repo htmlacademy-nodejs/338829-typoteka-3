@@ -1,3 +1,6 @@
+mixin formatDate(date)
+  span #{date.replace(/-/g, '.').replace('T', ' ')}
+
 doctype html
 html(lang="ru")
   head

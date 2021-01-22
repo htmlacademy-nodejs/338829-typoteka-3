@@ -50,7 +50,7 @@ const generatePost = ({count, titles, sentences, categories, comments}) => {
     announce: shuffle(sentences).slice(0, SentencesRestrict.MAX).join(` `),
     fullText: shuffle(sentences).slice(0, getRandomInt(SentencesRestrict.MIN, sentences.length - 1)).join(` `),
     createdDate: getRandomDate(),
-    сategory: shuffle(categories).slice(getRandomInt(0, categories.length - 1)),
+    category: shuffle(categories).slice(getRandomInt(0, categories.length - 1)),
     comments: generateComments(getRandomInt(1, MAX_COMMENTS), comments),
   }));
 };

@@ -6,7 +6,8 @@ const path = require(`path`);
 const {
   DEFAULT_EXPRESS_PORT,
   EXPRESS_PUBLIC_DIR,
-  HttpCode
+  EXPRESS_UPLOAD_DIR,
+  HttpCode,
 } = require(`../constants`);
 
 const rootRouter = require(`./routes/root`);
@@ -16,6 +17,8 @@ const myRouter = require(`./routes/my`);
 const app = express();
 
 app.use(express.static(path.resolve(__dirname, EXPRESS_PUBLIC_DIR)));
+app.use(express.static(path.resolve(__dirname, EXPRESS_UPLOAD_DIR)));
+
 app.use(`/`, rootRouter);
 app.use(`/articles`, articlesRouter);
 app.use(`/my`, myRouter);

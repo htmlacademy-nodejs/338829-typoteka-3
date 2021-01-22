@@ -15,10 +15,11 @@ block content
             if articles.length > 0
               each article in articles
                 .search__result
-                  time.search__date(datetime=article.createdDate) #{article.createdDate}
-                  a.search__link.
+                  time.search__date(datetime=article.createdDate)
+                    +formatDate(article.createdDate)
+                  a(href='/articles/' + article.id).search__link.
                     #{article.title}
-          if articles.length === 0
+          if articles.length === 0 && typeof searchValue === 'string'
             p.search-page__empty Ничего не нашлось
     footer.footer
       include ../partials/footer

@@ -18,12 +18,19 @@ rootRouter.get(`/register`, (req, res) => res.render(`pages/sign-up`));
 rootRouter.get(`/login`, (req, res) => res.render(`pages/login`));
 
 rootRouter.get(`/search`, async (req, res) => {
+  const {search: searchValue} = req.query;
+
   try {
-    const {search: searchValue} = req.query;
     const articles = await axiosApi.searchArticles(searchValue);
-    res.render(`pages/search`, {articles, searchValue});
+    res.render(`pages/search`, {
+      articles,
+      searchValue
+    });
   } catch (error) {
-    res.render(`pages/search`, {articles: []});
+    res.render(`pages/search`, {
+      articles: [],
+      searchValue: searchValue ? searchValue : null
+    });
   }
 });
 

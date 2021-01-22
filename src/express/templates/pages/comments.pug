@@ -12,7 +12,8 @@ block content
               .publication__header
                 img.publication__list-image(src='/img/avatar-small-2.png' width='20' height='20' alt='Аватар пользователя')
                 b.publication__list-name #{comment.author}
-                time.publication__item-time(datetime=comment.createdDate) #{comment.createdDate}
+                time.publication__item-time(datetime=comment.createdDate)
+                  +formatDate(comment.createdDate)
               a.publication__item-text(href='/articles/' + comment.articleId) #{comment.articleTitle}
               p.publication__text-strong #{comment.text}
               button.publication__button.button.button--close-item(type='button')

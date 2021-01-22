@@ -5,6 +5,7 @@ const DEFAULT_GENERATE_COUNT = 1;
 const DEFAULT_PORT = 3000;
 const DEFAULT_EXPRESS_PORT = 8080;
 const EXPRESS_PUBLIC_DIR = `public`;
+const EXPRESS_UPLOAD_DIR = `upload`;
 
 const FILE_MOCK_PATH = `mocks.json`;
 const FILE_SENTENCES_PATH = `./data/sentences.txt`;
@@ -74,6 +75,7 @@ module.exports = {
   DEFAULT_PORT,
   DEFAULT_EXPRESS_PORT,
   EXPRESS_PUBLIC_DIR,
+  EXPRESS_UPLOAD_DIR,
   FILE_MOCK_PATH,
   FILE_SENTENCES_PATH,
   FILE_TITLES_PATH,
