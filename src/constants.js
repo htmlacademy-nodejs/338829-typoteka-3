@@ -8,6 +8,7 @@ const EXPRESS_PUBLIC_DIR = `public`;
 const EXPRESS_UPLOAD_DIR = `upload`;
 
 const FILE_MOCK_PATH = `mocks.json`;
+const FILE_SQL_PATH = `fill-db.sql`;
 const FILE_SENTENCES_PATH = `./data/sentences.txt`;
 const FILE_TITLES_PATH = `./data/titles.txt`;
 const FILE_CATEGORIES_PATH = `./data/categories.txt`;
@@ -16,7 +17,7 @@ const FILE_API_LOG_PATH = `./src/service/logs/api.log`;
 
 const MAX_MOCK_ITEMS = 1000;
 const MAX_ID_LENGTH = 6;
-const MAX_COMMENTS = 8;
+
 const DAY_MS = 1000 * 60 * 60 * 24;
 const DATE_INTERVAL = 91;
 
@@ -33,11 +34,22 @@ const CommentsRestrict = {
   MAX: 4,
 };
 
+const CommentsCount = {
+  MIN: 2,
+  MAX: 8,
+};
+
+const CategoriesCount = {
+  MIN: 1,
+  MAX: 4,
+};
+
 const CliCommand = {
   HELP: `--help`,
   VERSION: `--version`,
   GENERATE: `--generate`,
-  SERVER: `--server`
+  SERVER: `--server`,
+  FILL: `--fill`
 };
 
 const ExitCode = {
@@ -77,6 +89,7 @@ module.exports = {
   EXPRESS_PUBLIC_DIR,
   EXPRESS_UPLOAD_DIR,
   FILE_MOCK_PATH,
+  FILE_SQL_PATH,
   FILE_SENTENCES_PATH,
   FILE_TITLES_PATH,
   FILE_CATEGORIES_PATH,
@@ -84,13 +97,14 @@ module.exports = {
   FILE_API_LOG_PATH,
   MAX_MOCK_ITEMS,
   MAX_ID_LENGTH,
-  MAX_COMMENTS,
   DAY_MS,
   DATE_INTERVAL,
   API_PREFIX,
   API_TIMEOUT,
   SentencesRestrict,
   CommentsRestrict,
+  CommentsCount,
+  CategoriesCount,
   CliCommand,
   ExitCode,
   HttpCode,
