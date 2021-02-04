@@ -14,9 +14,10 @@ FROM categories
 SELECT
   categories.id,
   categories.name,
-  COUNT(article_categories.article_id) as articles_count
+  COUNT(DISTINCT article_categories.article_id) as articles_count
 FROM categories
-  LEFT JOIN article_categories ON categories.id = article_categories.category_id
+  LEFT JOIN article_categories
+  ON categories.id = article_categories.category_id
   GROUP BY categories.id;
 
 -- select last articles
