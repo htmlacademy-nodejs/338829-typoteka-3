@@ -2,6 +2,7 @@
 
 const express = require(`express`);
 const routes = require(`../api`);
+const sequelize = require(`../lib/sequelize`)();
 const {getLogger} = require(`../lib/logger`);
 const {requestLogger} = require(`../middlewares`);
 
@@ -9,7 +10,8 @@ const {
   DEFAULT_PORT,
   API_PREFIX,
   CliCommand,
-  HttpCode
+  HttpCode,
+  ExitCode
 } = require(`../../constants`);
 
 const {checkNumParam} = require(`../../utils`);
@@ -47,7 +49,18 @@ const startHttpServer = (port) => {
 
 module.exports = {
   name: CliCommand.SERVER,
-  run(args = []) {
+  async run(args = []) {
+    const logger = getLogger({name: `db`});
+    try {
+      logger.info(`Trying to connect to database...`);
+      await sequelize.authenticate();
+    } catch (err) {
+      logger.error(`An error occured: ${err.message}`);
+      process.exit(ExitCode.FATAL_EXCEPTION);
+    }
+
+    logger.info(`Connection to database established`);
+
     const [userPort] = args;
     const port = checkNumParam(userPort, DEFAULT_PORT);
     startHttpServer(port);
