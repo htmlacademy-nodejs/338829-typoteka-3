@@ -5,12 +5,16 @@ const {axiosApi} = require(`../axios-api/axios-api`);
 const rootRouter = new Router();
 
 rootRouter.get(`/`, async (req, res) => {
-  const articles = await axiosApi.getArticles();
+  const hasComments = true;
+  const articles = await axiosApi.getArticles(hasComments);
+
   if (articles.length === 0) {
     return res.render(`pages/main-empty`);
   }
 
-  const categories = axiosApi.getCategories();
+  const hasCount = true;
+  const categories = await axiosApi.getCategories(hasCount);
+
   return res.render(`pages/main`, {articles, categories});
 });
 
@@ -34,6 +38,9 @@ rootRouter.get(`/search`, async (req, res) => {
   }
 });
 
-rootRouter.get(`/categories`, (req, res) => res.render(`pages/all-categories`));
+rootRouter.get(`/categories`, async (req, res) => {
+  const categories = await axiosApi.getCategories();
+  return res.render(`pages/all-categories`, {categories});
+});
 
 module.exports = rootRouter;

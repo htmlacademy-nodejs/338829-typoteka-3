@@ -6,7 +6,12 @@ const {HttpCode} = require(`../../constants`);
 const {axiosApi} = require(`../axios-api/axios-api`);
 const articlesRouter = new Router();
 
-articlesRouter.get(`/category/:id`, (req, res) => res.render(`pages/articles-by-category`));
+articlesRouter.get(`/category/:id`, async (req, res) => {
+  const hasCount = true;
+  const categories = await axiosApi.getCategories(hasCount);
+
+  res.render(`pages/articles-by-category`, {categories, currentId: Number(req.params.id)});
+});
 
 articlesRouter.get(`/add`, (req, res) => {
   res.render(`pages/new-post`, {newArticle: {}});
@@ -20,7 +25,7 @@ articlesRouter.post(`/add`, pictureUpload.single(`img`), async (req, res) => {
     picture: file && file.filename || ``,
     announce: body.announce,
     fullText: body.fullText,
-    createdDate: body.date,
+    createdAt: body.date,
     category: []
   };
 
@@ -45,7 +50,9 @@ articlesRouter.get(`/edit/:id`, async (req, res) => {
 
 articlesRouter.get(`/:id`, async (req, res) => {
   try {
-    const article = await axiosApi.getArticle(req.params.id);
+    const hasComments = true;
+    const article = await axiosApi.getArticle(req.params.id, hasComments);
+
     res.render(`pages/post`, {article});
   } catch (error) {
     res

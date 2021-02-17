@@ -4,7 +4,8 @@ const {HttpCode} = require(`../../../constants`);
 
 module.exports = (articleService) => async (req, res, next) => {
   const {articleId} = req.params;
-  const article = await articleService.findOne(articleId);
+  const hasComments = Boolean(req.query.comments);
+  const article = await articleService.findOne(articleId, hasComments);
 
   if (!article) {
     return res

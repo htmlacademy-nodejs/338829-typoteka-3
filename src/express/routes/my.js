@@ -10,25 +10,9 @@ myRouter.get(`/`, async (req, res) => {
 });
 
 myRouter.get(`/comments`, async (req, res) => {
-  const allArticles = await axiosApi.getArticles();
-  const articles = allArticles.slice(0, 3);
-
-  const response = await Promise.all(articles.map((article) => axiosApi.getArticleComments(article.id)));
-  const comments = [];
-
-  articles.forEach((article, index) => {
-    response[index].forEach((comment) => {
-      comments.push({
-        articleId: article.id,
-        articleTitle: article.title,
-        createdDate: `2019-03-21T20:33`,
-        author: `Александр Петров`,
-        ...comment
-      });
-    });
-  });
-
-  return res.render(`pages/comments`, {comments});
+  const hasComments = true;
+  const articles = await axiosApi.getArticles(hasComments);
+  return res.render(`pages/comments`, {articles: articles.slice(0, 3)});
 });
 
 module.exports = myRouter;

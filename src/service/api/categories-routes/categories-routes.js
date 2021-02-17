@@ -8,7 +8,9 @@ module.exports = (app, categoryService) => {
   app.use(`/categories`, route);
 
   route.get(`/`, async (req, res) => {
-    const categories = await categoryService.findAll();
+    const hasCount = Boolean(req.query.count);
+    const categories = await categoryService.findAll(hasCount);
+
     return res
       .status(HttpCode.OK)
       .json(categories);

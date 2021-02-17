@@ -3,19 +3,19 @@ ul.preview__list
   each article in articles
     li.preview__item
       ul.preview__breadcrumbs
-        each category, index in article.category
+        each category in article.categories
           li.preview__breadcrumbs-item
-            a.preview__breadcrumbs-link(href='/categories/' + index) #{category}
+            a.preview__breadcrumbs-link(href='/categories/' + category.id) #{category.name}
       .preview__background
         img.preview__background-image(
-          src=article.picture ? '/img/' + article.picture : '/img/skyscraper@1x.jpg'
+          src='/img/' + article.picture
           width='460'
           height='240'
-          srcset=article.picture ? '/img/' + article.picture : '/img/skyscraper@1x.jpg, /img/skyscraper@2x.jpg 2x'
+          srcset='/img/' + article.picture
           alt=article.title
         )
-      time.preview__time(datetime=article.createdDate)
-        +formatDate(article.createdDate)
+      time.preview__time(datetime=article.createdAt)
+        +formatDate(article.createdAt)
       h3.preview__name
         a.preview__name-link(href='/articles/' + article.id) #{article.title}
       p.preview__text #{article.announce}

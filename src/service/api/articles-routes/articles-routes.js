@@ -15,7 +15,9 @@ module.exports = (app, articleService, commentService) => {
   app.use(`/articles`, route);
 
   route.get(`/`, async (req, res) => {
-    const articles = await articleService.findAll();
+    const hasComments = Boolean(req.query.comments);
+    const articles = await articleService.findAll(hasComments);
+
     return res
       .status(HttpCode.OK)
       .json(articles);

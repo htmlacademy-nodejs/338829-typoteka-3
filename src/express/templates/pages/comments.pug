@@ -7,16 +7,17 @@ block content
       section.main-page__publication.publication
         h1.publication__title Комментарии
         ul.publication__list
-          each comment in comments
-            li.publication__list-item
-              .publication__header
-                img.publication__list-image(src='/img/avatar-small-2.png' width='20' height='20' alt='Аватар пользователя')
-                b.publication__list-name #{comment.author}
-                time.publication__item-time(datetime=comment.createdDate)
-                  +formatDate(comment.createdDate)
-              a.publication__item-text(href='/articles/' + comment.articleId) #{comment.articleTitle}
-              p.publication__text-strong #{comment.text}
-              button.publication__button.button.button--close-item(type='button')
-                span.visually-hidden Закрыть строку списка
+          each article in articles
+            each comment in article.comments
+              li.publication__list-item
+                .publication__header
+                  img.publication__list-image(src='/img/avatar-small-2.png' width='20' height='20' alt='Аватар пользователя')
+                  b.publication__list-name Александр Петров
+                  time.publication__item-time(datetime=comment.createdAt)
+                    +formatDate(comment.createdAt)
+                a.publication__item-text(href='/articles/' + article.id) #{article.title}
+                p.publication__text-strong #{comment.text}
+                button.publication__button.button.button--close-item(type='button')
+                  span.visually-hidden Закрыть строку списка
     footer.footer.footer--padding
       include ../partials/footer

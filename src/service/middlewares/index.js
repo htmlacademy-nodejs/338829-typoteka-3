@@ -8,7 +8,7 @@ const requestLogger = require(`./request-logger/request-logger`);
 module.exports = {
   articleExist,
   commentExist,
-  articleValidator: keyValidator([`title`, `createdDate`, `categories`, `announce`]),
+  articleValidator: keyValidator([`title`, `createdAt`, `categories`, `announce`]),
   commentValidator: keyValidator([`text`]),
   requestLogger
 };

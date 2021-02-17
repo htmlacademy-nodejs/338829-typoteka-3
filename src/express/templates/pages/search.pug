@@ -15,8 +15,8 @@ block content
             if articles.length > 0
               each article in articles
                 .search__result
-                  time.search__date(datetime=article.createdDate)
-                    +formatDate(article.createdDate)
+                  time.search__date(datetime=article.createdAt)
+                    +formatDate(article.createdAt)
                   a(href='/articles/' + article.id).search__link.
                     #{article.title}
           if articles.length === 0 && typeof searchValue === 'string'
