@@ -2,10 +2,9 @@
 
 const {HttpCode} = require(`../../../constants`);
 
-module.exports = (commentService) => (req, res, next) => {
+module.exports = (commentService) => async (req, res, next) => {
   const {commentId} = req.params;
-  const {article} = res.locals;
-  const comment = commentService.findOne(article, commentId);
+  const comment = await commentService.findOne(commentId);
 
   if (!comment) {
     return res
