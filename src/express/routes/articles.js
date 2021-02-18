@@ -8,9 +8,22 @@ const articlesRouter = new Router();
 
 articlesRouter.get(`/category/:id`, async (req, res) => {
   const hasCount = true;
-  const categories = await axiosApi.getCategories(hasCount);
+  const hasComments = true;
 
-  res.render(`pages/articles-by-category`, {categories, currentId: Number(req.params.id)});
+  const [categories, articles] = await Promise.all([
+    axiosApi.getCategories(hasCount),
+    axiosApi.getArticles(hasComments)
+  ]);
+
+  const catId = Number(req.params.id);
+
+  res.render(`pages/articles-by-category`, {
+    categories,
+    catId,
+    articles: articles.filter((article) => {
+      return article.categories.some((category) => category.id === catId);
+    })
+  });
 });
 
 articlesRouter.get(`/add`, (req, res) => {

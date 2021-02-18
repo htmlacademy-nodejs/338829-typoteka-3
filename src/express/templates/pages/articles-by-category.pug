@@ -2,8 +2,8 @@ extends ../layout
 
 block content
   -
-    const getThemeClass = (category, currentId) => {
-      return category.id === currentId ? 'themes__item-link.themes__item-link--active' : 'themes__item-link'
+    const getThemeClass = (category, catId) => {
+      return category.id === catId ? 'themes__item-link.themes__item-link--active' : 'themes__item-link'
     };
   .wrapper
     header.header
@@ -19,10 +19,10 @@ block content
         ul.themes
           each category in categories
             li.themes__item
-              a(href='/articles/category/' + category.id class=getThemeClass(category, currentId))
+              a(href='/articles/category/' + category.id class=getThemeClass(category, catId))
                 | #{category.name}
                 sup #{category.count}
       section.articles-category__list.preview
-        // include ../partials/articles-preview
+        include ../partials/articles-preview
     footer.footer
       include ../partials/footer

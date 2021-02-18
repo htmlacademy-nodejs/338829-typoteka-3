@@ -1,5 +1,10 @@
 mixin formatDate(date)
-  span #{date.replace(/-/g, '.').replace('T', ' ')}
+  -
+    const convert = (dateString) => {
+      const date = new Date(dateString);
+      return date.toLocaleString();
+    }
+  span #{convert(date)}
 
 doctype html
 html(lang="ru")
