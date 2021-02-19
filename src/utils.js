@@ -36,10 +36,23 @@ const readContent = async (filePath) => {
   }
 };
 
+const getCategoryArticle = (categories) => {
+  if (Array.isArray(categories)) {
+    return categories.map((id) => Number(id));
+  }
+
+  if (typeof categories === `string`) {
+    return [Number(categories)];
+  }
+
+  return [];
+};
+
 module.exports = {
   getRandomInt,
   shuffle,
   formatDate,
   checkNumParam,
-  readContent
+  readContent,
+  getCategoryArticle
 };

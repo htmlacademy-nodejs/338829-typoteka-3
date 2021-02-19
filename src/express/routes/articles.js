@@ -4,6 +4,8 @@ const {Router} = require(`express`);
 const {pictureUpload} = require(`../middlewares`);
 const {HttpCode} = require(`../../constants`);
 const {axiosApi} = require(`../axios-api/axios-api`);
+const {getCategoryArticle} = require(`../../utils`);
+
 const articlesRouter = new Router();
 
 articlesRouter.get(`/category/:id`, async (req, res) => {
@@ -26,8 +28,9 @@ articlesRouter.get(`/category/:id`, async (req, res) => {
   });
 });
 
-articlesRouter.get(`/add`, (req, res) => {
-  res.render(`pages/new-post`, {newArticle: {}});
+articlesRouter.get(`/add`, async (req, res) => {
+  const categories = await axiosApi.getCategories();
+  res.render(`pages/new-post`, {newArticle: {categories: []}, categories});
 });
 
 articlesRouter.post(`/add`, pictureUpload.single(`img`), async (req, res) => {
@@ -39,14 +42,16 @@ articlesRouter.post(`/add`, pictureUpload.single(`img`), async (req, res) => {
     announce: body.announce,
     fullText: body.fullText,
     createdAt: body.date,
-    category: []
+    categories: getCategoryArticle(body.categories)
   };
+
+  const categories = await axiosApi.getCategories();
 
   try {
     await axiosApi.createArticle(newArticle);
     res.redirect(`/my`);
   } catch (e) {
-    res.render(`pages/new-post`, {newArticle});
+    res.render(`pages/new-post`, {newArticle, categories});
   }
 });
 

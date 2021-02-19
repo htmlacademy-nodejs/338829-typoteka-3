@@ -30,14 +30,24 @@ block content
                       label
                         input.visually-hidden(type='file' name="img")
                         | Обзор
+                  each category in categories
+                    .new-publication__checkbox.new-publication__checkbox--auto
+                      input(
+                        id='checkbox-auto' + category.id
+                        type='checkbox'
+                        value=category.id
+                        name='categories'
+                        checked=newArticle.categories.includes(category.id)
+                      )
+                      label(for='checkbox-auto'  + category.id) #{category.name}
                   a.new-publication__form-link.button.button--transparent(href='#') Добавить категорию
                 .form__wrapper.form__wrapper--text
                   .form__field.form__field--publication-text
                     label
-                      textarea(rows='1' name="announce" placeholder='Анонс публикации') #{newArticle.announce}
+                      textarea(rows='2' name="announce" placeholder='Анонс публикации') #{newArticle.announce}
                   .form__field.form__field--publication-text
                     label
-                      textarea(rows='1' name="fullText" placeholder='Полный текст публикации') #{newArticle.fullText}
+                      textarea(rows='5' name="fullText" placeholder='Полный текст публикации') #{newArticle.fullText}
         .modal__overlay
 
 block scripts
