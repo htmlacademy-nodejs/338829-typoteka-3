@@ -2,7 +2,7 @@
 
 const express = require(`express`);
 const routes = require(`../api`);
-const sequelize = require(`../lib/sequelize`)();
+const createSequelize = require(`../lib/sequelize`);
 const {getLogger} = require(`../lib/logger`);
 const {requestLogger} = require(`../middlewares`);
 
@@ -51,6 +51,8 @@ module.exports = {
   name: CliCommand.SERVER,
   async run(args = []) {
     const logger = getLogger({name: `db`});
+    const sequelize = createSequelize();
+
     try {
       logger.info(`Trying to connect to database...`);
       await sequelize.authenticate();

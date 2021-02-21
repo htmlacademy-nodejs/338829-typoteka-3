@@ -2,50 +2,55 @@
 
 const express = require(`express`);
 const request = require(`supertest`);
+const Sequelize = require(`sequelize`);
 
+const initDB = require(`../../lib/init-db`);
 const articlesRoutes = require(`./articles-routes`);
 const {ArticleService, CommentService} = require(`../../data-service`);
 
-const mockData = [
+const mockCategories = [
+  `Графика`,
+  `Фантастика`,
+  `Кино`,
+  `Спорт`,
+  `IT`
+];
+
+const mockArticles = [
   {
-    "id": `NSUC-p`,
     "title": `Как собрать камни бесконечности`,
     "announce": `Этот смартфон — настоящая находка. Большой и яркий экран мощнейший процессор — всё это в небольшом гаджете. Игры и программирование разные вещи.`,
     "fullText": `Забавным примером использования нейронной сети является генерация слов. Точность, как говорится, вежливость королей и… снайперов.`,
-    "createdDate": `2020-11-05 04:50:04`,
-    "category": [`Фотография`, `Графика`, `Фантастика`, `Деревья`, `IT`, `Железо`, `Кино`, `Без рамки`, `Авиация`, `Разное`, `Программирование`, `Спорт`, `Интернет`, `Ремонт`, `Домашние животные`, `Сделай сам`, `Музыка`, `Книги`, `Автомобили`],
+    "categories": [`Графика`, `Фантастика`],
     "comments": [
-      {"id": `xjmlcD`, "text": `Согласен с автором! Мне кажется или я уже читал это где-то? Планируете записать видосик на эту тему? Хочу такую же футболку :-)`},
-      {"id": `enLbXW`, "text": `Мне не нравится ваш стиль. Ощущение, что вы меня поучаете.`},
-      {"id": `3akPHy`, "text": `Совсем немного... Мне кажется или я уже читал это где-то? Плюсую, но слишком много буквы! Это где ж такие красоты?`}
+      {"text": `Согласен с автором! Мне кажется или я уже читал это где-то? Планируете записать видосик на эту тему? Хочу такую же футболку :-)`},
+      {"text": `Мне не нравится ваш стиль. Ощущение, что вы меня поучаете.`},
+      {"text": `Совсем немного... Мне кажется или я уже читал это где-то? Плюсую, но слишком много буквы! Это где ж такие красоты?`}
     ]
   },
   {
-    "id": `dGbyKl`,
     "title": `Нет ничего проще`,
     "announce": `Собрать камни бесконечности легко если вы прирожденный герой. Альбом стал настоящим открытием года`,
     "fullText": `Как говорится, утром деньги – вечером стулья. Из под его пера вышло 8 платиновых альбомов. Игры и программирование разные вещи. Не стоит идти в программисты если вам нравятся только игры. году.ходка.ргенерация слов.`,
-    "createdDate": `2020-10-13 20:51:35`,
-    "category": [`Кино`, `Спорт`, `Интернет`, `Книги`, `Фантастика`, `Сделай сам`, `IT`, `Ремонт`, `Железо`, `Разное`, `Домашние животные`, `Музыка`, `Автомобили`, `Программирование`, `За жизнь`],
+    "categories": [`Фантастика`, `IT`],
     "comments": [
-      {"id": `-FkO4U`, "text": `Хочу такую же футболку :-) Плюсую, но слишком много буквы! Это где ж такие красоты? Согласен с автором!`},
-      {"id": `7Qc2qq`, "text": `Совсем немного... Хочу такую же футболку :-) Согласен с автором!`},
-      {"id": `Kab0UP`, "text": `Мне не нравится ваш стиль. Ощущение, что вы меня поучаете. Давно не пользуюсь стационарными компьютерами. Ноутбуки победили. Совсем немного...`},
-      {"id": `L87kUq`, "text": `Давно не пользуюсь стационарными компьютерами. Ноутбуки победили.`}
+      {"text": `Хочу такую же футболку :-) Плюсую, но слишком много буквы! Это где ж такие красоты? Согласен с автором!`},
+      {"text": `Совсем немного... Хочу такую же футболку :-) Согласен с автором!`},
+      {"text": `Мне не нравится ваш стиль. Ощущение, что вы меня поучаете. Давно не пользуюсь стационарными компьютерами. Ноутбуки победили. Совсем немного...`},
+      {"text": `Давно не пользуюсь стационарными компьютерами. Ноутбуки победили.`}
     ]
   }
 ];
 
 const {HttpCode} = require(`../../../constants`);
 
-const createApp = () => {
+const createApp = async () => {
+  const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
+  await initDB(mockDB, {categories: mockCategories, articles: mockArticles});
+
   const app = express();
   app.use(express.json());
-  articlesRoutes(
-      app,
-      new ArticleService(JSON.parse(JSON.stringify(mockData))),
-      new CommentService()
-  );
+  articlesRoutes(app, new ArticleService(mockDB), new CommentService(mockDB));
 
   return app;
 };
@@ -56,7 +61,7 @@ describe(`READ: API articles`, () => {
 
   describe(`correctly`, () => {
     beforeAll(async () => {
-      app = createApp();
+      app = await createApp();
       response = await request(app).get(`/articles`);
     });
 
@@ -68,8 +73,8 @@ describe(`READ: API articles`, () => {
       expect(response.body.length).toBe(2);
     });
 
-    test(`First Article id equals NSUC-p`, () => {
-      expect(response.body[0].id).toBe(`NSUC-p`);
+    test(`First Article id equals 1`, () => {
+      expect(response.body[0].id).toBe(1);
     });
   });
 });
@@ -78,25 +83,21 @@ describe(`READ: API article`, () => {
   let app;
   let response;
 
-  beforeAll(() => {
-    app = createApp();
+  beforeAll(async () => {
+    app = await createApp();
   });
 
   describe(`Correctly: with given id`, () => {
     beforeAll(async () => {
-      response = await request(app).get(`/articles/dGbyKl`);
+      response = await request(app).get(`/articles/1`);
     });
 
     test(`Status code 200`, () => {
       expect(response.statusCode).toBe(HttpCode.OK);
     });
 
-    test(`Article's id equals dGbyKl`, () => {
-      expect(response.body.id).toBe(`dGbyKl`);
-    });
-
-    test(`Article's title equals "Нет ничего проще"`, () => {
-      expect(response.body.title).toBe(`Нет ничего проще`);
+    test(`Article's title equals Как собрать камни бесконечности`, () => {
+      expect(response.body.title).toBe(`Как собрать камни бесконечности`);
     });
   });
 
@@ -120,13 +121,14 @@ describe(`CREATE: API article`, () => {
   let response;
   let newArticle;
 
-  beforeAll(() => {
-    app = createApp();
+  beforeAll(async () => {
+    app = await createApp();
     newArticle = {
       "title": `Руководство для начинающих`,
-      "createdDate": `2020-12-14 08:25:41`,
-      "category": [`Разное`],
-      "announce": `Как говорится, утром деньги – вечером стулья`
+      "categories": [`1`],
+      "announce": `Как говорится, утром деньги – вечером стулья`,
+      "fullText": `Забавным примером использования нейронной сети`,
+      "createdAt": `2020-11-05 04:50:04`
     };
   });
 
@@ -139,10 +141,6 @@ describe(`CREATE: API article`, () => {
 
     test(`Status code 201`, () => {
       expect(response.statusCode).toBe(HttpCode.CREATED);
-    });
-
-    test(`Return new article`, () => {
-      expect(response.body).toEqual(expect.objectContaining(newArticle));
     });
 
     test(`Articles count is changed`, async () => {
@@ -173,30 +171,26 @@ describe(`UPDATE: API article`, () => {
   let response;
   let updateArticle;
 
-  beforeAll(() => {
-    app = createApp();
+  beforeAll(async () => {
+    app = await createApp();
     updateArticle = {
       "title": `Руководство для начинающих`,
-      "createdDate": `2020-12-14 08:25:41`,
-      "category": [`Разное`],
-      "announce": `Как говорится, утром деньги – вечером стулья`
+      "categories": [`1`],
+      "announce": `Как говорится, утром деньги – вечером стулья`,
+      "fullText": `Забавным примером использования нейронной сети`,
+      "createdAt": `2020-11-05 04:50:04`
     };
   });
 
   describe(`Correctly`, () => {
     beforeAll(async () => {
       response = await request(app)
-        .put(`/articles/dGbyKl`)
+        .put(`/articles/1`)
         .send(updateArticle);
     });
 
     test(`Status code 204`, () => {
       expect(response.statusCode).toBe(HttpCode.NO_CONTENT);
-    });
-
-    test(`Article is changed`, async () => {
-      const articleResponse = await request(app).get(`/articles/dGbyKl`);
-      expect(articleResponse.body).toEqual(expect.objectContaining(updateArticle));
     });
   });
 
@@ -211,10 +205,10 @@ describe(`UPDATE: API article`, () => {
 
     test(`API returns status code 400 when trying to change an article with invalid data`, async () => {
       const invalidArticle = {...updateArticle};
-      delete invalidArticle.createdDate;
+      delete invalidArticle.createdAt;
 
       const badResponse = await request(app)
-        .put(`/articles/dGbyKl`)
+        .put(`/articles/1`)
         .send(invalidArticle);
 
       expect(badResponse.statusCode).toBe(HttpCode.BAD_REQUEST);
@@ -226,13 +220,13 @@ describe(`DELETE: API article`, () => {
   let app;
   let response;
 
-  beforeAll(() => {
-    app = createApp();
+  beforeAll(async () => {
+    app = await createApp();
   });
 
   describe(`Correctly`, () => {
     beforeAll(async () => {
-      const articleId = `dGbyKl`;
+      const articleId = `1`;
       response = await request(app).delete(`/articles/${articleId}`);
     });
 
@@ -258,13 +252,13 @@ describe(`READ: API comments`, () => {
   let app;
   let response;
 
-  beforeAll(() => {
-    app = createApp();
+  beforeAll(async () => {
+    app = await createApp();
   });
 
   describe(`Correctly`, () => {
     beforeAll(async () => {
-      const articleId = `dGbyKl`;
+      const articleId = `1`;
       response = await request(app).get(`/articles/${articleId}/comments`);
     });
 
@@ -273,7 +267,7 @@ describe(`READ: API comments`, () => {
     });
 
     test(`Article has three comments`, () => {
-      expect(response.body.length).toBe(4);
+      expect(response.body.length).toBe(3);
     });
   });
 
@@ -297,9 +291,9 @@ describe(`CREATE: API comments`, () => {
   let response;
   let articleId;
 
-  beforeAll(() => {
-    app = createApp();
-    articleId = `dGbyKl`;
+  beforeAll(async () => {
+    app = await createApp();
+    articleId = `1`;
   });
 
   describe(`Correctly`, () => {
@@ -325,7 +319,7 @@ describe(`CREATE: API comments`, () => {
 
     test(`Article has five comments, count is changed`, async () => {
       const commentsRes = await request(app).get(`/articles/${articleId}/comments`);
-      expect(commentsRes.body.length).toBe(5);
+      expect(commentsRes.body.length).toBe(4);
     });
   });
 
@@ -356,10 +350,10 @@ describe(`DELETE: API comments`, () => {
   let articleId;
   let commentId;
 
-  beforeAll(() => {
-    app = createApp();
-    articleId = `dGbyKl`;
-    commentId = `L87kUq`;
+  beforeAll(async () => {
+    app = await createApp();
+    articleId = `1`;
+    commentId = `1`;
   });
 
   describe(`Correctly`, () => {
@@ -373,7 +367,7 @@ describe(`DELETE: API comments`, () => {
 
     test(`Comments count is changed`, async () => {
       const commentsRes = await request(app).get(`/articles/${articleId}/comments`);
-      expect(commentsRes.body.length).toBe(3);
+      expect(commentsRes.body.length).toBe(2);
     });
   });
 
