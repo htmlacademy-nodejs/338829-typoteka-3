@@ -2,20 +2,36 @@
 
 const {Router} = require(`express`);
 const {axiosApi} = require(`../axios-api/axios-api`);
+const {LIMIT_PER_PAGE} = require(`../../constants`);
+
 const rootRouter = new Router();
 
 rootRouter.get(`/`, async (req, res) => {
-  const hasComments = true;
-  const articles = await axiosApi.getArticles(hasComments);
+  const {page = 1} = req.query;
 
-  if (articles.length === 0) {
+  const limit = LIMIT_PER_PAGE;
+  const offset = (Number(page) - 1) * limit;
+
+  const [
+    {count, articles},
+    categories
+  ] = await Promise.all([
+    axiosApi.getArticles({limit, offset, comments: true}),
+    axiosApi.getCategories({count: true})
+  ]);
+
+  if (count === 0) {
     return res.render(`pages/main-empty`);
   }
 
-  const hasCount = true;
-  const categories = await axiosApi.getCategories(hasCount);
+  const totalPages = Math.ceil(count / limit);
 
-  return res.render(`pages/main`, {articles, categories});
+  return res.render(`pages/main`, {
+    articles,
+    categories,
+    totalPages,
+    page: Number(page)
+  });
 });
 
 rootRouter.get(`/register`, (req, res) => res.render(`pages/sign-up`));

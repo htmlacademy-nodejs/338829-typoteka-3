@@ -24,6 +24,8 @@ const DATE_INTERVAL = 91;
 const API_PREFIX = `/api`;
 const API_TIMEOUT = 1000;
 
+const LIMIT_PER_PAGE = 8;
+
 const SentencesRestrict = {
   MIN: 1,
   MAX: 5,
@@ -102,6 +104,7 @@ module.exports = {
   DATE_INTERVAL,
   API_PREFIX,
   API_TIMEOUT,
+  LIMIT_PER_PAGE,
   SentencesRestrict,
   CommentsRestrict,
   CommentsCount,

@@ -23,10 +23,10 @@ const createApi = (baseURL, timeout = API_TIMEOUT) => {
 
   return {
     api,
-    getArticles: (hasComments = false) => fetch(`/articles`, {params: {comments: hasComments}}),
-    getArticle: (articleId, hasComments = false) => fetch(`/articles/${articleId}`, {params: {comments: hasComments}}),
-    getArticleComments: (articleId) => fetch(`/articles/${articleId}/comments`),
-    getCategories: (hasCount = false) => fetch(`/categories`, {params: {count: hasCount}}),
+    getArticles: ({limit, offset, comments = false} = {}) => fetch(`/articles`, {params: {limit, offset, comments}}),
+    getArticle: ({id, comments = false} = {}) => fetch(`/articles/${id}`, {params: {comments}}),
+    getArticleComments: (id) => fetch(`/articles/${id}/comments`),
+    getCategories: ({count = false} = {}) => fetch(`/categories`, {params: {count}}),
     searchArticles: (query) => fetch(`/search`, {params: {query}}),
     createArticle: (data) => fetch(`/articles`, {method: `POST`, data})
   };

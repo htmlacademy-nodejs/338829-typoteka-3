@@ -70,11 +70,11 @@ describe(`READ: API articles`, () => {
     });
 
     test(`Returns a list of 2 articles`, () => {
-      expect(response.body.length).toBe(2);
+      expect(response.body.articles.length).toBe(2);
     });
 
     test(`First Article id equals 1`, () => {
-      expect(response.body[0].id).toBe(1);
+      expect(response.body.articles[0].id).toBe(1);
     });
   });
 });
@@ -145,7 +145,7 @@ describe(`CREATE: API article`, () => {
 
     test(`Articles count is changed`, async () => {
       const articlesRes = await request(app).get(`/articles`);
-      expect(articlesRes.body.length).toBe(3);
+      expect(articlesRes.body.articles.length).toBe(3);
     });
   });
 
@@ -236,7 +236,7 @@ describe(`DELETE: API article`, () => {
 
     test(`Articles count is changed`, async () => {
       const articleRes = await request(app).get(`/articles`);
-      expect(articleRes.body.length).toBe(1);
+      expect(articleRes.body.articles.length).toBe(1);
     });
   });
 

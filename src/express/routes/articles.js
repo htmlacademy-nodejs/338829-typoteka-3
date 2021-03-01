@@ -9,12 +9,9 @@ const {getCategoryArticle} = require(`../../utils`);
 const articlesRouter = new Router();
 
 articlesRouter.get(`/category/:id`, async (req, res) => {
-  const hasCount = true;
-  const hasComments = true;
-
   const [categories, articles] = await Promise.all([
-    axiosApi.getCategories(hasCount),
-    axiosApi.getArticles(hasComments)
+    axiosApi.getCategories({count: true}),
+    axiosApi.getArticles({comments: true})
   ]);
 
   const catId = Number(req.params.id);
@@ -57,7 +54,7 @@ articlesRouter.post(`/add`, pictureUpload.single(`img`), async (req, res) => {
 
 articlesRouter.get(`/edit/:id`, async (req, res) => {
   try {
-    const article = await axiosApi.getArticle(req.params.id);
+    const article = await axiosApi.getArticle({id: req.params.id});
     res.render(`pages/post`, {article});
   } catch (error) {
     res
@@ -68,8 +65,7 @@ articlesRouter.get(`/edit/:id`, async (req, res) => {
 
 articlesRouter.get(`/:id`, async (req, res) => {
   try {
-    const hasComments = true;
-    const article = await axiosApi.getArticle(req.params.id, hasComments);
+    const article = await axiosApi.getArticle({id: req.params.id, comments: true});
 
     res.render(`pages/post`, {article});
   } catch (error) {

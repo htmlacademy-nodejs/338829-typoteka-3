@@ -10,8 +10,7 @@ myRouter.get(`/`, async (req, res) => {
 });
 
 myRouter.get(`/comments`, async (req, res) => {
-  const hasComments = true;
-  const articles = await axiosApi.getArticles(hasComments);
+  const articles = await axiosApi.getArticles({comments: true});
   return res.render(`pages/comments`, {articles: articles.slice(0, 3)});
 });
 
