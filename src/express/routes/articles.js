@@ -5,23 +5,30 @@ const {pictureUpload} = require(`../middlewares`);
 const {HttpCode} = require(`../../constants`);
 const {axiosApi} = require(`../axios-api/axios-api`);
 const {getCategoryArticle} = require(`../../utils`);
+const {LIMIT_PER_PAGE} = require(`../../constants`);
 
 const articlesRouter = new Router();
 
 articlesRouter.get(`/category/:id`, async (req, res) => {
-  const [categories, articles] = await Promise.all([
+  const catId = Number(req.params.id);
+  const {page = 1} = req.query;
+
+  const limit = LIMIT_PER_PAGE;
+  const offset = (Number(page) - 1) * limit;
+
+  const [categories, {count, articles}] = await Promise.all([
     axiosApi.getCategories({count: true}),
-    axiosApi.getArticles({comments: true})
+    axiosApi.getArticles({limit, offset, comments: true, catId})
   ]);
 
-  const catId = Number(req.params.id);
+  const totalPages = Math.ceil(count / limit);
 
   res.render(`pages/articles-by-category`, {
     categories,
     catId,
-    articles: articles.filter((article) => {
-      return article.categories.some((category) => category.id === catId);
-    })
+    articles,
+    totalPages,
+    page: Number(page)
   });
 });
 

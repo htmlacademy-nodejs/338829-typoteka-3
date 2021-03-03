@@ -5,6 +5,7 @@ const Aliase = require(`../../models/aliase`);
 class ArticleService {
   constructor(sequelize) {
     this._Article = sequelize.models.Article;
+    this._Category = sequelize.models.Category;
   }
 
   async create(newArticle) {
@@ -49,6 +50,42 @@ class ArticleService {
     return {
       count,
       articles: rows
+    };
+  }
+
+  async findInCategory(limit, offset, catId, hasComments) {
+    const include = [{
+      model: this._Category,
+      as: Aliase.CATEGORIES,
+      where: {
+        id: catId
+      }
+    }];
+
+    if (hasComments) {
+      include.push(Aliase.COMMENTS);
+    }
+
+    if (limit || offset) {
+      const {count, rows} = await this._Article.findAndCountAll({
+        limit,
+        offset,
+        include,
+        distinct: true
+      });
+
+      return {
+        count,
+        articles: rows
+      };
+    }
+
+    const result = await this._Article.findAll({include});
+    const articles = result.map((it) => it.get());
+
+    return {
+      count: articles.length,
+      articles
     };
   }
 

@@ -20,9 +20,10 @@ block content
           each category in categories
             li.themes__item
               a(href='/articles/category/' + category.id class=getThemeClass(category, catId))
-                | #{category.name}
+                | #{category.name}#{` `}
                 sup #{category.count}
       section.articles-category__list.preview
         include ../partials/articles-preview
+      +pagination(page, totalPages, 1)
     footer.footer
       include ../partials/footer
