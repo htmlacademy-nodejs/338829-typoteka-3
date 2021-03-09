@@ -101,17 +101,31 @@ describe(`READ: API article`, () => {
     });
   });
 
-  describe(`Incorrectly: with given id`, () => {
+  describe(`Incorrectly: with given incorrectly id = NOEXST`, () => {
     beforeAll(async () => {
       response = await request(app).get(`/articles/NOEXST`);
+    });
+
+    test(`Status code 400`, () => {
+      expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
+    });
+
+    test(`Response text to equal "\"id\" must be a number"`, () => {
+      expect(response.text).toBe(`\"id\" must be a number`);
+    });
+  });
+
+  describe(`Incorrectly: with given correctly id = 10`, () => {
+    beforeAll(async () => {
+      response = await request(app).get(`/articles/10`);
     });
 
     test(`Status code 404`, () => {
       expect(response.statusCode).toBe(HttpCode.NOT_FOUND);
     });
 
-    test(`Response text to equal "Article with NOEXST not found"`, () => {
-      expect(response.text).toBe(`Article with NOEXST not found`);
+    test(`Response text to equal "Article with 10 not found"`, () => {
+      expect(response.text).toBe(`Article with 10 not found`);
     });
   });
 });
@@ -124,7 +138,7 @@ describe(`CREATE: API article`, () => {
   beforeAll(async () => {
     app = await createApp();
     newArticle = {
-      "title": `Руководство для начинающих`,
+      "title": `Руководство для начинающих: утром деньги – вечером стулья`,
       "categories": [`1`],
       "announce": `Как говорится, утром деньги – вечером стулья`,
       "fullText": `Забавным примером использования нейронной сети`,
@@ -174,7 +188,7 @@ describe(`UPDATE: API article`, () => {
   beforeAll(async () => {
     app = await createApp();
     updateArticle = {
-      "title": `Руководство для начинающих`,
+      "title": `Руководство для начинающих для начинающих`,
       "categories": [`1`],
       "announce": `Как говорится, утром деньги – вечером стулья`,
       "fullText": `Забавным примером использования нейронной сети`,
@@ -195,9 +209,17 @@ describe(`UPDATE: API article`, () => {
   });
 
   describe(`Incorrectly`, () => {
-    test(`API returns status code 404 when trying to change non-existent article`, async () => {
+    test(`API returns status code 400 when trying to change articles id = NOEXST`, async () => {
       const notFoundResponse = await request(app)
         .put(`/articles/NOEXST`)
+        .send(updateArticle);
+
+      expect(notFoundResponse.statusCode).toBe(HttpCode.BAD_REQUEST);
+    });
+
+    test(`API returns status code 404 when trying to change articles id = 10`, async () => {
+      const notFoundResponse = await request(app)
+        .put(`/articles/10`)
         .send(updateArticle);
 
       expect(notFoundResponse.statusCode).toBe(HttpCode.NOT_FOUND);
@@ -241,8 +263,13 @@ describe(`DELETE: API article`, () => {
   });
 
   describe(`Incorrectly`, () => {
-    test(`API returns status code 404 when trying to delete non-existent article`, async () => {
+    test(`API returns status code 400 when trying to delete non-existent article`, async () => {
       const notFoundResponse = await request(app).put(`/articles/NOEXST`);
+      expect(notFoundResponse.statusCode).toBe(HttpCode.BAD_REQUEST);
+    });
+
+    test(`API returns status code 404 when trying to change article id = 10`, async () => {
+      const notFoundResponse = await request(app).delete(`/articles/10`);
       expect(notFoundResponse.statusCode).toBe(HttpCode.NOT_FOUND);
     });
   });
@@ -271,17 +298,31 @@ describe(`READ: API comments`, () => {
     });
   });
 
-  describe(`Incorrectly`, () => {
+  describe(`Incorrectly articleId = NOEXST`, () => {
     beforeAll(async () => {
       response = await request(app).get(`/articles/NOEXST/comments`);
+    });
+
+    test(`Status code 400`, () => {
+      expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
+    });
+
+    test(`Response text to equal "\"id\" must be a number"`, () => {
+      expect(response.text).toBe(`\"id\" must be a number`);
+    });
+  });
+
+  describe(`Correctly article = 10`, () => {
+    beforeAll(async () => {
+      response = await request(app).get(`/articles/10/comments`);
     });
 
     test(`Status code 404`, () => {
       expect(response.statusCode).toBe(HttpCode.NOT_FOUND);
     });
 
-    test(`Response text to equal "Article with NOEXST not found"`, () => {
-      expect(response.text).toBe(`Article with NOEXST not found`);
+    test(`Response text to equal "Article with 10 not found"`, () => {
+      expect(response.text).toBe(`Article with 10 not found`);
     });
   });
 });
@@ -301,7 +342,7 @@ describe(`CREATE: API comments`, () => {
 
     beforeAll(async () => {
       newComment = {
-        text: `Мне не нравится ваш стиль`
+        text: `Мне не нравится ваш стиль. Мне не нравится ваш стиль`
       };
 
       response = await request(app)
@@ -326,12 +367,12 @@ describe(`CREATE: API comments`, () => {
   describe(`Incorrectly`, () => {
     const badComment = {};
 
-    test(`Status code 404 with non-existent article`, async () => {
+    test(`Status code 400 with non-existent article`, async () => {
       const notfoundResponse = await request(app)
         .post(`/articles/NOEXST/comments`)
         .send(badComment);
 
-      expect(notfoundResponse.statusCode).toBe(HttpCode.NOT_FOUND);
+      expect(notfoundResponse.statusCode).toBe(HttpCode.BAD_REQUEST);
     });
 
     test(`Status code 400, invalid comment`, async () => {
@@ -340,6 +381,14 @@ describe(`CREATE: API comments`, () => {
         .send(badComment);
 
       expect(badResponse.statusCode).toBe(HttpCode.BAD_REQUEST);
+    });
+
+    test(`Status code 404 with not found article`, async () => {
+      const notfoundResponse = await request(app)
+        .post(`/articles/10/comments`)
+        .send(badComment);
+
+      expect(notfoundResponse.statusCode).toBe(HttpCode.NOT_FOUND);
     });
   });
 });
@@ -371,14 +420,26 @@ describe(`DELETE: API comments`, () => {
     });
   });
 
-  describe(`Incorrectly`, () => {
-    test(`Status code 404 with non-existent article`, async () => {
+  describe(`Incorrectly articleId & commentId`, () => {
+    test(`Status code 400 with non-existent article`, async () => {
       const notfoundResponse = await request(app).delete(`/articles/NOEXST/comments/${commentId}`);
+      expect(notfoundResponse.statusCode).toBe(HttpCode.BAD_REQUEST);
+    });
+
+    test(`Status code 400 with non-existent comment`, async () => {
+      const notfoundResponse = await request(app).delete(`/articles/${articleId}/comments/NOEXST`);
+      expect(notfoundResponse.statusCode).toBe(HttpCode.BAD_REQUEST);
+    });
+  });
+
+  describe(`Correctly Not found`, () => {
+    test(`Status code 404 with non-existent article`, async () => {
+      const notfoundResponse = await request(app).delete(`/articles/10/comments/${commentId}`);
       expect(notfoundResponse.statusCode).toBe(HttpCode.NOT_FOUND);
     });
 
     test(`Status code 404 with non-existent comment`, async () => {
-      const notfoundResponse = await request(app).delete(`/articles/${articleId}/comments/NOEXST`);
+      const notfoundResponse = await request(app).delete(`/articles/${articleId}/comments/100`);
       expect(notfoundResponse.statusCode).toBe(HttpCode.NOT_FOUND);
     });
   });

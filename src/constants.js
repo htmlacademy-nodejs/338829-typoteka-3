@@ -81,6 +81,33 @@ const NodeEnv = {
   PRODUCTION: `production`
 };
 
+const ArticleSchema = {
+  TITLE: {
+    MIN: 30,
+    MAX: 250
+  },
+  ANNOUNCE: {
+    MIN: 30,
+    MAX: 250
+  },
+  FULL_TEXT: {
+    MAX: 1000
+  },
+  PICTURE: {
+    MIN: 1,
+    MAX: 16
+  },
+  CATEGORIES: {
+    MIN: 1
+  }
+};
+
+const CommentSchema = {
+  TEXT: {
+    MIN: 50
+  }
+};
+
 const DEFAULT_CLI_COMMAND = CliCommand.HELP;
 
 module.exports = {
@@ -113,5 +140,7 @@ module.exports = {
   ExitCode,
   HttpCode,
   LogLevel,
-  NodeEnv
+  NodeEnv,
+  ArticleSchema,
+  CommentSchema
 };
