@@ -93,10 +93,6 @@ const ArticleSchema = {
   FULL_TEXT: {
     MAX: 1000
   },
-  PICTURE: {
-    MIN: 1,
-    MAX: 16
-  },
   CATEGORIES: {
     MIN: 1
   }

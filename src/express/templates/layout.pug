@@ -46,6 +46,10 @@ mixin pagination(page, totalPages, width, prefix = '?')
             class=`${page === totalPages ? 'button--disabled' : ''}`
           ) Вперед
 
+mixin errorFormEl(errorText)
+  if errorText
+    p(style="color: red") #{errorText}
+
 doctype html
 html(lang="ru")
   head

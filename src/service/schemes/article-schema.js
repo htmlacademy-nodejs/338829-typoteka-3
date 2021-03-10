@@ -23,9 +23,7 @@ module.exports = Joi.object({
     .min(ArticleSchema.CATEGORIES.MIN)
     .required(),
   picture: Joi
-    .string()
-    .min(ArticleSchema.PICTURE.MIN)
-    .max(ArticleSchema.PICTURE.MAX),
+    .string(),
   fullText: Joi
     .string()
     .max(ArticleSchema.FULL_TEXT.MAX)

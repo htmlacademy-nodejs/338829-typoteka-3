@@ -15,7 +15,13 @@ block content
                   .new-publication__date-form-division
                     .new-publication__date-block
                       label(for='new-publication-date' aria-label='Календарь')
-                      input#new-publication-date(type='text' name='date' placeholder='21.03.2019' value=newArticle.createdAt)
+                      input#new-publication-date(
+                        type='text'
+                        name='date'
+                        placeholder=newArticle.createdAt
+                        value=newArticle.createdAt
+                      )
+                    +errorFormEl(message.createdAt)
                 button.new-publication__button.button.button--colored(type='submit') Опубликовать
               button.popup__button.button.button--popup-close(type='button' aria-label='Закрыть окно') Закрыть окно
               .new-publication__form.form
@@ -23,6 +29,7 @@ block content
                   .form__field
                     label
                       input(type='text' name="title" placeholder='Заголовок' value=newArticle.title required)
+                    +errorFormEl(message.title)
                   .form__field.form__field--post-image
                     label
                       input#image-name-field(type='text' name="picture" placeholder='Фотография' value=newArticle.picture readonly)
@@ -37,17 +44,20 @@ block content
                         type='checkbox'
                         value=category.id
                         name='categories'
-                        checked=newArticle.categories.includes(category.id)
+                        checked=newArticle.categories.includes(String(category.id))
                       )
                       label(for='checkbox-auto'  + category.id) #{category.name}
+                  +errorFormEl(message.categories)
                   a.new-publication__form-link.button.button--transparent(href='#') Добавить категорию
                 .form__wrapper.form__wrapper--text
                   .form__field.form__field--publication-text
                     label
                       textarea(rows='2' name="announce" placeholder='Анонс публикации') #{newArticle.announce}
+                  +errorFormEl(message.announce)
                   .form__field.form__field--publication-text
                     label
                       textarea(rows='5' name="fullText" placeholder='Полный текст публикации') #{newArticle.fullText}
+                  +errorFormEl(message.fullText)
         .modal__overlay
 
 block scripts
