@@ -23,7 +23,9 @@ module.exports = Joi.object({
     .min(ArticleSchema.CATEGORIES.MIN)
     .required(),
   picture: Joi
-    .string(),
+    .string()
+    .allow(null, ``)
+    .pattern(new RegExp(`(?:jpg|png)`)),
   fullText: Joi
     .string()
     .max(ArticleSchema.FULL_TEXT.MAX)

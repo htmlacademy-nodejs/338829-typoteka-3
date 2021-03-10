@@ -37,6 +37,7 @@ block content
                       label
                         input.visually-hidden(type='file' name="img")
                         | Обзор
+                  +errorFormEl(message.picture)
                   each category in categories
                     .new-publication__checkbox.new-publication__checkbox--auto
                       input(
