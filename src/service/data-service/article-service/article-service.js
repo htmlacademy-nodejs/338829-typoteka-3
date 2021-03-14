@@ -6,6 +6,7 @@ class ArticleService {
   constructor(sequelize) {
     this._Article = sequelize.models.Article;
     this._Category = sequelize.models.Category;
+    this._ArticleCategory = sequelize.models.ArticleCategory;
   }
 
   async create(newArticle) {
@@ -25,6 +26,13 @@ class ArticleService {
     const [updatedRows] = await this._Article.update(article, {
       where: {id}
     });
+
+    await this._ArticleCategory.destroy({
+      where: {ArticleId: id}
+    });
+
+    const updateArticle = await this._Article.findByPk(id);
+    await updateArticle.addCategories([...article.categories]);
     return Boolean(updatedRows);
   }
 
