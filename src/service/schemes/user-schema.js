@@ -23,7 +23,7 @@ module.exports = Joi.object({
     .string()
     .required()
     .messages({
-      'any.required': `\"name\" ${RegisterMessage.REQUIRED_FIELD}`
+      'any.required': `\"surname\" ${RegisterMessage.REQUIRED_FIELD}`
     }),
   password: Joi
     .string()
