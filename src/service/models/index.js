@@ -5,12 +5,14 @@ const defineCategory = require(`./category/category`);
 const defineComment = require(`./comment/comment`);
 const defineArticle = require(`./article/article`);
 const defineArticleCategory = require(`./article-category/article-category`);
+const defineUser = require(`./user/user`);
 
 module.exports = (sequelize) => {
   const Category = defineCategory(sequelize);
   const Comment = defineComment(sequelize);
   const Article = defineArticle(sequelize);
   const ArticleCategory = defineArticleCategory(sequelize);
+  const User = defineUser(sequelize);
 
   // один ко многим
   // связка статья -> коммент
@@ -27,6 +29,7 @@ module.exports = (sequelize) => {
     Category,
     Comment,
     Article,
-    ArticleCategory
+    ArticleCategory,
+    User
   };
 };
