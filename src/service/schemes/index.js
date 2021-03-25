@@ -2,12 +2,14 @@
 
 const articleSchema = require(`./article-schema`);
 const commentSchema = require(`./comment-schema`);
-const idSchema = require(`./id-schema`);
+const articleIdSchema = require(`./article-id-scheme`);
+const commentIdSchema = require(`./comment-id-scheme`);
 const userSchema = require(`./user-schema`);
 
 module.exports = {
   articleSchema,
   commentSchema,
-  idSchema,
+  articleIdSchema,
+  commentIdSchema,
   userSchema
 };

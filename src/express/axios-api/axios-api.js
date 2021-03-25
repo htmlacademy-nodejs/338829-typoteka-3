@@ -32,6 +32,7 @@ const createApi = (baseURL, timeout = API_TIMEOUT) => {
     updateArticle: (id, data) => fetch(`/articles/${id}`, {method: `PUT`, data}),
     createComment: (id, data) => fetch(`/articles/${id}/comments`, {method: `POST`, data}),
     deleteComment: (id, commentId) => fetch(`/articles/${id}/comments/${commentId}`, {method: `DELETE`}),
+    createUser: (user) => fetch(`/user`, {method: `POST`, data: user})
   };
 };
 

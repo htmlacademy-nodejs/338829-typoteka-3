@@ -140,21 +140,18 @@ articlesRouter.post(`/:id`, async (req, res) => {
   const {id} = req.params;
   const {text} = req.body;
 
-  let message;
   try {
     await axiosApi.createComment(id, {text});
-    message = {};
+    res.redirect(`/articles/${id}`);
   } catch (err) {
-    message = getErrorMessage(err.response.data.message);
+    const categories = await axiosApi.getCategories({count: true});
+    const article = await axiosApi.getArticle({id, comments: true});
+    res.render(`pages/post`, {
+      article,
+      categories,
+      message: getErrorMessage(err.response.data.message)
+    });
   }
-
-  const categories = await axiosApi.getCategories({count: true});
-  const article = await axiosApi.getArticle({id, comments: true});
-  res.render(`pages/post`, {
-    article,
-    categories,
-    message
-  });
 });
 
 module.exports = articlesRouter;
