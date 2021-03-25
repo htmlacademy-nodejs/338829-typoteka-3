@@ -1,10 +1,14 @@
+/* eslint-disable camelcase */
 'use strict';
 
-const {Router} = require(`express`);
+const express = require(`express`);
 const {axiosApi} = require(`../axios-api/axios-api`);
+const {pictureUpload} = require(`../middlewares`);
+const {getErrorMessage} = require(`../../utils`);
 const {LIMIT_PER_PAGE} = require(`../../constants`);
 
-const rootRouter = new Router();
+const rootRouter = new express.Router();
+rootRouter.use(express.urlencoded({extended: true}));
 
 rootRouter.get(`/`, async (req, res) => {
   const {page = 1} = req.query;
@@ -34,7 +38,44 @@ rootRouter.get(`/`, async (req, res) => {
   });
 });
 
-rootRouter.get(`/register`, (req, res) => res.render(`pages/sign-up`));
+rootRouter.get(`/register`, (req, res) => {
+  res.render(`pages/sign-up`, {
+    newUser: {
+      email: ``,
+      name: ``,
+      surname: ``,
+      password: ``,
+      confirm_password: ``,
+      avatar: ``
+    },
+    message: {}
+  });
+});
+
+rootRouter.post(`/register`, pictureUpload.single(`avatar`), async (req, res) => {
+  const {body, file} = req;
+
+  const newUser = {
+    ...body,
+    avatar: file && file.filename || ``
+  };
+
+  try {
+    await axiosApi.createUser(newUser);
+    res.redirect(`/login`);
+  } catch (err) {
+    res.render(`pages/sign-up`, {
+      newUser: {
+        ...newUser,
+        avatar: newUser.avatar || body.avatar,
+        password: ``,
+        confirm_password: ``
+      },
+      message: getErrorMessage(err.response.data.message)
+    });
+  }
+});
+
 rootRouter.get(`/login`, (req, res) => res.render(`pages/login`));
 
 rootRouter.get(`/search`, async (req, res) => {

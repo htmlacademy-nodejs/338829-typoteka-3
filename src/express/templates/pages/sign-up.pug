@@ -15,28 +15,35 @@ block content
             li.popup__tab.popup__tab--log-in
               button.popup__tab-switcher.button(type='button') Войти
           .popup__form.popup__form--active.form.form--register
-            form(action='#' method='get')
+            form(action='/register' method='post')
               .form__field
                 label
-                  input(type='email' placeholder='Электронная почта' required)
+                  input(type='email' placeholder='Электронная почта' name='email' value=newUser.email required)
+                +errorFormEl(message.email)
               .form__field
                 label
-                  input(type='text' placeholder='Имя' required)
+                  input(type='text' placeholder='Имя' name='name' value=newUser.name required)
+                +errorFormEl(message.name)
               .form__field
                 label
-                  input(type='text' placeholder='Фамилия')
+                  input(type='text' placeholder='Фамилия' name='surname' value=newUser.surname required)
+                +errorFormEl(message.surname)
               .form__field
                 label
-                  input(type='password' placeholder='Пароль' required)
+                  input(type='password' placeholder='Пароль' name='password' required)
+                +errorFormEl(message.password)
               .form__field
                 label
-                  input(type='password' placeholder='Повтор пароля' required)
+                  input(type='password' placeholder='Повтор пароля' name='confirm_password' required)
+                +errorFormEl(message.confirm_password)
               .form__image-loader
                 a.form__avatar.avatar
                   img(src='/img/icons/smile.svg' alt='аватар пользователя')
                 label
-                  input.visually-hidden(type='file')
+                  input.visually-hidden(type='file' name='avatar' value=newUser.avatar)
                   | Загрузить фото профиля
+                +errorFormEl(message.avatar)
+              +errorFormEl(message.exist)
               button.form__submit-btn.form__submit-btn--register.button.button--colored(type='submit') Зарегистрироваться
           .popup__form.popup__form--hidden.form.form--log-in
             form(action='#' method='get')
