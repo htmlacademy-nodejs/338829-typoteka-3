@@ -3,9 +3,10 @@
 const {RegisterMessage, HttpCode} = require(`../../../constants`);
 
 module.exports = (usersService) => async (req, res, next) => {
-  const {body} = req;
   try {
+    const {body} = req;
     const userExist = await usersService.findByEmail(body.email);
+
     if (userExist) {
       return res
         .status(HttpCode.BAD_REQUEST)
@@ -14,6 +15,8 @@ module.exports = (usersService) => async (req, res, next) => {
           data: {}
         });
     }
+
+    return next();
   } catch (error) {
     return res
       .status(HttpCode.BAD_REQUEST)
@@ -22,6 +25,4 @@ module.exports = (usersService) => async (req, res, next) => {
         data: {}
       });
   }
-
-  return next();
 };
