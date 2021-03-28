@@ -110,7 +110,7 @@ describe(`READ: API article`, () => {
       expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
     });
 
-    test(`Response to equal "\"articleId\" must be a number"`, () => {
+    test(`Response to equal "articleId" must be a number"`, () => {
       expect(response.body).toStrictEqual({
         "data": {"articleId": `NOEXST`},
         "message": [`"articleId" must be a number`]
@@ -310,7 +310,7 @@ describe(`READ: API comments`, () => {
       expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
     });
 
-    test(`Response to equal "\"articleId\" must be a number"`, () => {
+    test(`Response to equal "articleId" must be a number"`, () => {
       expect(response.body).toStrictEqual({
         "data": {"articleId": `NOEXST`},
         "message": [`"articleId" must be a number`]
@@ -437,7 +437,7 @@ describe(`DELETE: API comments`, () => {
       expect(notfoundResponse.statusCode).toBe(HttpCode.BAD_REQUEST);
     });
 
-    test(`Response to equal "\"commentId\" must be a number"`, async () => {
+    test(`Response to equal "commentId" must be a number"`, async () => {
       const notfoundResponse = await request(app).delete(`/articles/${articleId}/comments/NOEXST`);
       expect(notfoundResponse.body).toStrictEqual({
         "data": {"articleId": `1`, "commentId": `NOEXST`},

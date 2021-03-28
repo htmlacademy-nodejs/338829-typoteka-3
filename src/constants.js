@@ -116,8 +116,7 @@ const RegisterMessage = {
   REQUIRED_FIELD: `Поле обязательно для заполнения`,
   MIN_PASSWORD_LENGTH: `Пароль должен быть не меньше 6 символов`,
   PASSWORDS_NOT_EQUALS: `Пароли не совпадают`,
-  EMPTY_VALUE: `Не указано значение`,
-  FATAL: `Что-то пошло не так`
+  EMPTY_VALUE: `Не указано значение`
 };
 
 const DEFAULT_CLI_COMMAND = CliCommand.HELP;

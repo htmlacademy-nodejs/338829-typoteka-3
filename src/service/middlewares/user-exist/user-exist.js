@@ -11,18 +11,13 @@ module.exports = (usersService) => async (req, res, next) => {
       return res
         .status(HttpCode.BAD_REQUEST)
         .json({
-          message: [`\"exist\" ${RegisterMessage.USER_ALREADY_REGISTER}`],
+          message: [`"exist" ${RegisterMessage.USER_ALREADY_REGISTER}`],
           data: {}
         });
     }
 
     return next();
   } catch (error) {
-    return res
-      .status(HttpCode.BAD_REQUEST)
-      .json({
-        message: [RegisterMessage.FATAL],
-        data: {}
-      });
+    return next(error);
   }
 };

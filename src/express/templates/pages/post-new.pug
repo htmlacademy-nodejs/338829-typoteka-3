@@ -23,7 +23,7 @@ block content
                       )
                     +errorFormEl(message.createdAt)
                 button.new-publication__button.button.button--colored(type='submit') Опубликовать
-              button.popup__button.button.button--popup-close(type='button' aria-label='Закрыть окно') Закрыть окно
+              button.popup__button.button.button--popup-close(type='button' aria-label='Закрыть окно'  onclick='backToMain()') Закрыть окно
               .new-publication__form.form
                 .form__wrapper.form__wrapper--intro
                   .form__field
@@ -49,7 +49,7 @@ block content
                       )
                       label(for='checkbox-auto'  + category.id) #{category.name}
                   +errorFormEl(message.categories)
-                  a.new-publication__form-link.button.button--transparent(href='#') Добавить категорию
+                  a.new-publication__form-link.button.button--transparent(href='/categories') Добавить категорию
                 .form__wrapper.form__wrapper--text
                   .form__field.form__field--publication-text
                     label

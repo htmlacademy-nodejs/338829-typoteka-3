@@ -326,3 +326,18 @@ if (textarea) {
     autosize(element);
   });
 }
+
+// custom
+function backToMain() {
+  window.location.href = '/';
+}
+
+// back
+function backHistory() {
+  window.history.back();
+}
+
+// new Article
+function toAddArticle() {
+  window.location.href = '/articles/add';
+}
