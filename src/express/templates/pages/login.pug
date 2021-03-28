@@ -7,7 +7,7 @@ block content
       h1.visually-hidden Регистрация пользователя
       section.modal
         .popup.popup--registration
-          button.popup__button.button.button--popup-close(type='button' aria-label='Закрыть окно' onclick='backToMain()') Закрыть окно
+          button.popup__button.button.button--popup-close(type='button' aria-label='Закрыть окно'  onclick='backToMain()') Закрыть окно
           h2.visually-hidden Форма регистрации
           ul.popup__tabs
             li.popup__tab.popup__tab--register
@@ -15,40 +15,49 @@ block content
             li.popup__tab.popup__tab--active.popup__tab--log-in
               button.popup__tab-switcher.button(type='button') Войти
           .popup__form.popup__form--hidden.form.form--register
-            form(action='#' method='get')
+            form(action='/register' method='post')
               .form__field
                 label
-                  input(type='email' placeholder='Электронная почта' required)
+                  input(type='email' placeholder='Электронная почта' name='email' value=newUser.email required)
               .form__field
                 label
-                  input(type='text' placeholder='Имя' required)
+                  input(type='text' placeholder='Имя' name='name' value=newUser.name required)
               .form__field
                 label
-                  input(type='text' placeholder='Фамилия')
+                  input(type='text' placeholder='Фамилия' name='surname' value=newUser.surname required)
               .form__field
                 label
-                  input(type='password' placeholder='Пароль' required)
+                  input(type='password' placeholder='Пароль' name='password' required)
               .form__field
                 label
-                  input(type='password' placeholder='Повтор пароля' required)
+                  input(type='password' placeholder='Повтор пароля' name='confirm_password' required)
+              if regMessage && Object.keys(regMessage).length > 0
+                .form__validation-error
+                  p.form__error-message При регистрации произошли ошибки:
+                  ul.form__errors
+                    each error, key in regMessage
+                      li.form__error #{error}
               .form__image-loader
                 a.form__avatar.avatar
                   img(src='/img/icons/smile.svg' alt='аватар пользователя')
                 label
-                  input.visually-hidden(type='file')
+                  input.visually-hidden(type='file' name='avatar' value=newUser.avatar)
                   | Загрузить фото профиля
               button.form__submit-btn.form__submit-btn--register.button.button--colored(type='submit') Зарегистрироваться
           .popup__form.popup__form--active.form.form--log-in
-            form(action='#' method='get')
+            form(action='/login' method='post')
               .form__field
                 label
-                  input(type='email' placeholder='Электронная почта' required)
+                  input(type='email' placeholder='Электронная почта' value=login.email required)
+              +errorLoginForm(loginMessage.email)
               .form__field
                 label
                   input(type='password' placeholder='Пароль' required)
+              +errorLoginForm(loginMessage.password)
               button.form__submit-btn.form__submit-btn--log-in.button.button--colored(type='submit') Войти
         .modal__overlay
     footer.footer
       include ../partials/footer
+
 block scripts
   script(src='/js/main.js')

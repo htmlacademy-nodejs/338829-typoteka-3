@@ -39,7 +39,7 @@ rootRouter.get(`/`, async (req, res) => {
 });
 
 rootRouter.get(`/register`, (req, res) => {
-  res.render(`pages/sign-up`, {
+  return res.render(`pages/sign-up`, {
     newUser: {
       email: ``,
       name: ``,
@@ -48,7 +48,12 @@ rootRouter.get(`/register`, (req, res) => {
       confirm_password: ``,
       avatar: ``
     },
-    message: {}
+    login: {
+      email: ``,
+      password: ``
+    },
+    regMessage: {},
+    loginMessage: {}
   });
 });
 
@@ -62,42 +67,69 @@ rootRouter.post(`/register`, pictureUpload.single(`avatar`), async (req, res) =>
 
   try {
     await axiosApi.createUser(newUser);
-    res.redirect(`/login`);
+    return res.redirect(`/login`);
   } catch (err) {
-    res.render(`pages/sign-up`, {
+    return res.render(`pages/sign-up`, {
       newUser: {
         ...newUser,
         avatar: newUser.avatar || body.avatar,
         password: ``,
         confirm_password: ``
       },
-      message: getErrorMessage(err.response.data.message)
+      login: {
+        email: ``,
+        password: ``
+      },
+      regMessage: getErrorMessage(err.response.data.message),
+      loginMessage: {}
     });
   }
 });
 
-rootRouter.get(`/login`, (req, res) => res.render(`pages/login`));
+rootRouter.get(`/login`, (req, res) => {
+  return res.render(`pages/login`, {
+    newUser: {
+      email: ``,
+      name: ``,
+      surname: ``,
+      password: ``,
+      confirm_password: ``,
+      avatar: ``
+    },
+    login: {
+      email: ``,
+      password: ``
+    },
+    regMessage: {},
+    loginMessage: {}
+  });
+});
 
 rootRouter.get(`/search`, async (req, res) => {
   const {search: searchValue} = req.query;
 
   try {
     const articles = await axiosApi.searchArticles(searchValue);
-    res.render(`pages/search`, {
+    return res.render(`pages/search`, {
       articles,
       searchValue
     });
   } catch (error) {
-    res.render(`pages/search`, {
+    return res.render(`pages/search`, {
       articles: [],
       searchValue: searchValue ? searchValue : null
     });
   }
 });
 
-rootRouter.get(`/categories`, async (req, res) => {
-  const categories = await axiosApi.getCategories();
-  return res.render(`pages/all-categories`, {categories});
+rootRouter.get(`/categories`, async (req, res, next) => {
+  try {
+    const categories = await axiosApi.getCategories();
+    return res.render(`pages/all-categories`, {categories});
+  } catch (error) {
+    return next(error);
+  }
+
 });
 
 module.exports = rootRouter;

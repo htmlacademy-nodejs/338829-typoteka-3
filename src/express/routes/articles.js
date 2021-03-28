@@ -10,38 +10,47 @@ const {LIMIT_PER_PAGE} = require(`../../constants`);
 const articlesRouter = new express.Router();
 articlesRouter.use(express.urlencoded({extended: true}));
 
-articlesRouter.get(`/category/:id`, async (req, res) => {
-  const catId = Number(req.params.id);
-  const {page = 1} = req.query;
+articlesRouter.get(`/category/:id`, async (req, res, next) => {
+  try {
+    const catId = Number(req.params.id);
+    const {page = 1} = req.query;
 
-  const limit = LIMIT_PER_PAGE;
-  const offset = (Number(page) - 1) * limit;
+    const limit = LIMIT_PER_PAGE;
+    const offset = (Number(page) - 1) * limit;
 
-  const [categories, {count, articles}] = await Promise.all([
-    axiosApi.getCategories({count: true}),
-    axiosApi.getArticles({limit, offset, comments: true, catId})
-  ]);
+    const [categories, {count, articles}] = await Promise.all([
+      axiosApi.getCategories({count: true}),
+      axiosApi.getArticles({limit, offset, comments: true, catId})
+    ]);
 
-  const totalPages = Math.ceil(count / limit);
+    const totalPages = Math.ceil(count / limit);
 
-  res.render(`pages/articles-by-category`, {
-    categories,
-    catId,
-    articles,
-    totalPages,
-    page: Number(page)
-  });
+    return res.render(`pages/articles-by-category`, {
+      categories,
+      catId,
+      articles,
+      totalPages,
+      page: Number(page)
+    });
+  } catch (error) {
+    return next(error);
+  }
+
 });
 
-articlesRouter.get(`/add`, async (req, res) => {
-  const categories = await axiosApi.getCategories();
-  res.render(`pages/post-new`, {
-    newArticle: {
-      categories: []
-    },
-    categories,
-    message: {}
-  });
+articlesRouter.get(`/add`, async (req, res, next) => {
+  try {
+    const categories = await axiosApi.getCategories();
+    res.render(`pages/post-new`, {
+      newArticle: {
+        categories: []
+      },
+      categories,
+      message: {}
+    });
+  } catch (error) {
+    return next(error);
+  }
 });
 
 articlesRouter.post(`/add`, pictureUpload.single(`img`), async (req, res) => {
@@ -70,9 +79,8 @@ articlesRouter.post(`/add`, pictureUpload.single(`img`), async (req, res) => {
 });
 
 articlesRouter.get(`/edit/:id`, async (req, res) => {
-  const {id} = req.params;
-
   try {
+    const {id} = req.params;
     const categories = await axiosApi.getCategories({count: true});
     const editArticle = await axiosApi.getArticle({id});
 
@@ -137,10 +145,10 @@ articlesRouter.get(`/:id`, async (req, res) => {
 });
 
 articlesRouter.post(`/:id`, async (req, res) => {
-  const {id} = req.params;
-  const {text} = req.body;
+  const {id = ``} = req.params;
 
   try {
+    const {text} = req.body;
     await axiosApi.createComment(id, {text});
     res.redirect(`/articles/${id}`);
   } catch (err) {
