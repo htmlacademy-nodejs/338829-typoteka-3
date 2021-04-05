@@ -17,6 +17,7 @@ rootRouter.use(express.urlencoded({extended: true}));
 rootRouter.get(`/`, async (req, res, next) => {
   try {
     const {page = 1} = req.query;
+    const {isAuth, isAdmin} = res.locals.auth;
 
     const limit = LIMIT_PER_PAGE;
     const offset = (Number(page) - 1) * limit;
@@ -30,12 +31,14 @@ rootRouter.get(`/`, async (req, res, next) => {
     ]);
 
     if (count === 0) {
-      return res.render(`pages/main-empty`);
+      return res.render(`pages/main-empty`, {isAuth, isAdmin});
     }
 
     const totalPages = Math.ceil(count / limit);
 
     return res.render(`pages/main`, {
+      isAuth,
+      isAdmin,
       articles,
       categories,
       totalPages,
@@ -47,6 +50,8 @@ rootRouter.get(`/`, async (req, res, next) => {
 });
 
 rootRouter.get(`/register`, (req, res) => {
+  const {isAuth, isAdmin} = res.locals.auth;
+
   return res.render(`pages/sign-up`, {
     newUser: {
       email: ``,
@@ -56,7 +61,9 @@ rootRouter.get(`/register`, (req, res) => {
       confirm_password: ``,
       avatar: ``
     },
-    message: {}
+    message: {},
+    isAuth,
+    isAdmin
   });
 });
 
@@ -85,12 +92,16 @@ rootRouter.post(`/register`, pictureUpload.single(`avatar`), async (req, res) =>
 });
 
 rootRouter.get(`/login`, (req, res) => {
+  const {isAuth, isAdmin} = res.locals.auth;
+
   return res.render(`pages/login`, {
     login: {
       email: ``,
       password: ``
     },
-    message: {}
+    message: {},
+    isAuth,
+    isAdmin
   });
 });
 
@@ -129,15 +140,20 @@ rootRouter.get(`/logout`, privateRoute, async (req, res, next) => {
 
 rootRouter.get(`/search`, async (req, res) => {
   const {search: searchValue} = req.query;
+  const {isAuth, isAdmin} = res.locals.auth;
 
   try {
     const articles = await axiosApi.searchArticles(searchValue);
     return res.render(`pages/search`, {
+      isAuth,
+      isAdmin,
       articles,
       searchValue
     });
   } catch (error) {
     return res.render(`pages/search`, {
+      isAuth,
+      isAdmin,
       articles: [],
       searchValue: searchValue ? searchValue : null
     });
@@ -145,9 +161,15 @@ rootRouter.get(`/search`, async (req, res) => {
 });
 
 rootRouter.get(`/categories`, async (req, res, next) => {
+  const {isAuth, isAdmin} = res.locals.auth;
+
   try {
     const categories = await axiosApi.getCategories();
-    return res.render(`pages/all-categories`, {categories});
+    return res.render(`pages/all-categories`, {
+      isAuth,
+      isAdmin,
+      categories
+    });
   } catch (error) {
     return next(error);
   }

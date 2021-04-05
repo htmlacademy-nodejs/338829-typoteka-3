@@ -2,10 +2,11 @@
 
 const {Router} = require(`express`);
 const {axiosApi} = require(`../axios-api/axios-api`);
+const {privateRoute} = require(`../middlewares`);
 
 const myRouter = new Router();
 
-myRouter.get(`/`, async (req, res, next) => {
+myRouter.get(`/`, privateRoute, async (req, res, next) => {
   try {
     const {articles} = await axiosApi.getArticles();
     return res.render(`pages/my`, {articles});
@@ -14,7 +15,7 @@ myRouter.get(`/`, async (req, res, next) => {
   }
 });
 
-myRouter.get(`/comments`, async (req, res, next) => {
+myRouter.get(`/comments`, privateRoute, async (req, res, next) => {
   try {
     const {articles} = await axiosApi.getArticles({comments: true});
     return res.render(`pages/comments`, {articles: articles.slice(0, 3)});

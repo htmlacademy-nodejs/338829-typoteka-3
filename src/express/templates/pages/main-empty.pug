@@ -5,8 +5,13 @@ block content
     header.header
       a.header__logo.logo(href='/')
         img(src='img/icons/logo.svg' alt='логотип Тайпотеки')
-      a.header__registration(href='/register') Регистрация
-      a.header__enter(href='/login') Вход с паролем
+      if isAuth && isAdmin
+        include ../partials/header-admin
+      else if isAuth
+        include ../partials/header-user
+      else
+        a.header__registration(href='/register') Регистрация
+        a.header__enter(href='/login') Вход с паролем
       a.header__search.button.button--search(href='/search' aria-label='поиск по сайту')
     main.main-page
       h1.visually-hidden Главная страница личного блога Типотека
@@ -16,3 +21,6 @@ block content
         p.main-page__empty-text Здесь пока пусто!
     footer.footer
       include ../partials/footer
+
+block scripts
+  script(src='/js/main.js')

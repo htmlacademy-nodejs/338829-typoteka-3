@@ -1,7 +1,7 @@
 'use strict';
 
 const express = require(`express`);
-const {pictureUpload} = require(`../middlewares`);
+const {pictureUpload, privateRoute} = require(`../middlewares`);
 const {HttpCode} = require(`../../constants`);
 const {axiosApi} = require(`../axios-api/axios-api`);
 const {getCategoryArticle, getPictureArticle, getErrorMessage} = require(`../../utils`);
@@ -12,6 +12,8 @@ articlesRouter.use(express.urlencoded({extended: true}));
 
 articlesRouter.get(`/category/:id`, async (req, res, next) => {
   try {
+    const {isAuth, isAdmin} = res.locals.auth;
+
     const catId = Number(req.params.id);
     const {page = 1} = req.query;
 
@@ -26,6 +28,8 @@ articlesRouter.get(`/category/:id`, async (req, res, next) => {
     const totalPages = Math.ceil(count / limit);
 
     return res.render(`pages/articles-by-category`, {
+      isAuth,
+      isAdmin,
       categories,
       catId,
       articles,
@@ -38,10 +42,12 @@ articlesRouter.get(`/category/:id`, async (req, res, next) => {
 
 });
 
-articlesRouter.get(`/add`, async (req, res, next) => {
+articlesRouter.get(`/add`, privateRoute, async (req, res, next) => {
   try {
     const categories = await axiosApi.getCategories();
     return res.render(`pages/post-new`, {
+      isAuth: true,
+      isAdmin: true,
       newArticle: {
         categories: []
       },
@@ -53,7 +59,7 @@ articlesRouter.get(`/add`, async (req, res, next) => {
   }
 });
 
-articlesRouter.post(`/add`, pictureUpload.single(`img`), async (req, res) => {
+articlesRouter.post(`/add`, [privateRoute, pictureUpload.single(`img`)], async (req, res) => {
   const {body, file} = req;
 
   const newArticle = {
@@ -78,13 +84,15 @@ articlesRouter.post(`/add`, pictureUpload.single(`img`), async (req, res) => {
   }
 });
 
-articlesRouter.get(`/edit/:id`, async (req, res) => {
+articlesRouter.get(`/edit/:id`, privateRoute, async (req, res) => {
   try {
     const {id} = req.params;
     const categories = await axiosApi.getCategories({count: true});
     const editArticle = await axiosApi.getArticle({id});
 
     res.render(`pages/post-edit`, {
+      isAuth: true,
+      isAdmin: true,
       articleId: id,
       editArticle: {
         ...editArticle,
@@ -100,7 +108,7 @@ articlesRouter.get(`/edit/:id`, async (req, res) => {
   }
 });
 
-articlesRouter.post(`/edit/:id`, pictureUpload.single(`img`), async (req, res) => {
+articlesRouter.post(`/edit/:id`, [privateRoute, pictureUpload.single(`img`)], async (req, res) => {
   const {id} = req.params;
   const {body, file} = req;
 
@@ -129,10 +137,14 @@ articlesRouter.post(`/edit/:id`, pictureUpload.single(`img`), async (req, res) =
 
 articlesRouter.get(`/:id`, async (req, res) => {
   try {
+    const {isAuth, isAdmin} = res.locals.auth;
+
     const categories = await axiosApi.getCategories({count: true});
     const article = await axiosApi.getArticle({id: req.params.id, comments: true});
 
     res.render(`pages/post`, {
+      isAuth,
+      isAdmin,
       article,
       categories,
       message: {}
@@ -144,7 +156,7 @@ articlesRouter.get(`/:id`, async (req, res) => {
   }
 });
 
-articlesRouter.post(`/:id`, async (req, res) => {
+articlesRouter.post(`/:id`, privateRoute, async (req, res) => {
   const {id = ``} = req.params;
 
   try {

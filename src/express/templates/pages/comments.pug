@@ -2,7 +2,12 @@ extends ../layout
 
 block content
   .wrapper.wrapper--nobackground
-    include ../partials/header-admin
+    header.header
+      a.header__logo.logo(href='/')
+        img.logo__image(src='/img/icons/logo-image-only.svg' alt='логотип Тайпотеки')
+        span.logo__name Типотека
+      include ../partials/header-admin
+      a.header__search.button.button--search(href='/search' aria-label='поиск по сайту')
     main.main-page.main-page--padding
       section.main-page__publication.publication
         h1.publication__title Комментарии
@@ -21,3 +26,6 @@ block content
                   span.visually-hidden Закрыть строку списка
     footer.footer.footer--padding
       include ../partials/footer
+
+block scripts
+  script(src='/js/main.js')
