@@ -26,6 +26,10 @@ const API_TIMEOUT = 1000;
 
 const LIMIT_PER_PAGE = 8;
 
+const JWT_ACCESS_SECRET = `nesecretjwt`;
+const JWT_REFRESH_SECRET = `nesecretrefreshjwt`;
+const BCRYPT_SALT_ROUNDS = 10;
+
 const SentencesRestrict = {
   MIN: 1,
   MAX: 5,
@@ -119,6 +123,13 @@ const RegisterMessage = {
   EMPTY_VALUE: `Не указано значение`
 };
 
+const LoginMessage = {
+  USER_NOT_EXISTS: `Пользователь с таким email не зарегистрирован`,
+  WRONG_PASSWORD: `Неправильно введён логин или пароль`,
+  WRONG_EMAIL: `Неправильный email`,
+  REQUIRED_FIELD: `Поле обязательно для заполнения`,
+};
+
 const DEFAULT_CLI_COMMAND = CliCommand.HELP;
 
 module.exports = {
@@ -143,6 +154,9 @@ module.exports = {
   API_PREFIX,
   API_TIMEOUT,
   LIMIT_PER_PAGE,
+  BCRYPT_SALT_ROUNDS,
+  JWT_ACCESS_SECRET,
+  JWT_REFRESH_SECRET,
   SentencesRestrict,
   CommentsRestrict,
   CommentsCount,
@@ -155,5 +169,6 @@ module.exports = {
   ArticleSchema,
   CommentSchema,
   UserSchema,
-  RegisterMessage
+  RegisterMessage,
+  LoginMessage
 };

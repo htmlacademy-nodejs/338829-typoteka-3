@@ -41,7 +41,7 @@ articlesRouter.get(`/category/:id`, async (req, res, next) => {
 articlesRouter.get(`/add`, async (req, res, next) => {
   try {
     const categories = await axiosApi.getCategories();
-    res.render(`pages/post-new`, {
+    return res.render(`pages/post-new`, {
       newArticle: {
         categories: []
       },

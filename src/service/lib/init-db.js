@@ -1,10 +1,12 @@
 'use strict';
 
+const bcrypt = require(`bcrypt`);
 const defineModels = require(`../models`);
 const Aliase = require(`../models/aliase`);
+const {BCRYPT_SALT_ROUNDS} = require(`../../constants`);
 
-module.exports = async (sequelize, {categories, articles}) => {
-  const {Category, Article} = defineModels(sequelize);
+module.exports = async (sequelize, {categories, articles, users = []}) => {
+  const {Category, Article, User} = defineModels(sequelize);
   await sequelize.sync({force: true});
 
   const categoryModels = await Category.bulkCreate(categories.map((item) => ({name: item})));
@@ -20,6 +22,16 @@ module.exports = async (sequelize, {categories, articles}) => {
         article.categories.map((name) => categoryIdByName[name])
     );
   });
+
+  if (users.length) {
+    const promises = users.map(async (user) => {
+      const pwHash = await bcrypt.hash(user.password, BCRYPT_SALT_ROUNDS);
+      return {...user, password: pwHash};
+    });
+
+    const usersBcrypt = await Promise.all(promises);
+    await User.bulkCreate(usersBcrypt);
+  }
 
   await Promise.all(articlePromises);
 };
