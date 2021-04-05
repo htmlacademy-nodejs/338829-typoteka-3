@@ -341,3 +341,11 @@ function backHistory() {
 function toAddArticle() {
   window.location.href = '/articles/add';
 }
+
+function toLogin() {
+  window.location.href = '/login';
+}
+
+function toSignup() {
+  window.location.href = '/register';
+}

@@ -2,6 +2,7 @@
 const express = require(`express`);
 const chalk = require(`chalk`);
 const path = require(`path`);
+const cookieParser = require(`cookie-parser`);
 
 const {
   DEFAULT_EXPRESS_PORT,
@@ -9,6 +10,8 @@ const {
   EXPRESS_UPLOAD_DIR,
   HttpCode,
 } = require(`../constants`);
+
+const {authenticate} = require(`./middlewares`);
 
 const rootRouter = require(`./routes/root`);
 const articlesRouter = require(`./routes/articles`);
@@ -18,6 +21,9 @@ const app = express();
 
 app.use(express.static(path.resolve(__dirname, EXPRESS_PUBLIC_DIR)));
 app.use(express.static(path.resolve(__dirname, EXPRESS_UPLOAD_DIR)));
+
+app.use(cookieParser());
+app.use(authenticate);
 
 app.use(`/`, rootRouter);
 app.use(`/articles`, articlesRouter);

@@ -9,7 +9,8 @@ const {
   idArticleValidator,
   idCommentValidator,
   commentExist,
-  commentValidator
+  commentValidator,
+  authenticateJwt
 } = require(`../../middlewares`);
 
 module.exports = (app, articleService, commentService) => {
@@ -43,7 +44,7 @@ module.exports = (app, articleService, commentService) => {
     }
   });
 
-  route.post(`/`, articleValidator, async (req, res, next) => {
+  route.post(`/`, [authenticateJwt, articleValidator], async (req, res, next) => {
     try {
       const article = await articleService.create(req.body);
       return res
@@ -61,41 +62,47 @@ module.exports = (app, articleService, commentService) => {
       .json(article);
   });
 
-  route.put(`/:articleId`, [idArticleValidator, articleExist(articleService), articleValidator], async (req, res, next) => {
-    try {
-      const {articleId} = req.params;
-      const updateRes = await articleService.update(articleId, req.body);
-      return res
+  route.put(`/:articleId`,
+      [authenticateJwt, idArticleValidator, articleExist(articleService), articleValidator],
+      async (req, res, next) => {
+        try {
+          const {articleId} = req.params;
+          const updateRes = await articleService.update(articleId, req.body);
+          return res
         .status(HttpCode.NO_CONTENT)
         .send(updateRes);
-    } catch (error) {
-      return next(error);
-    }
-  });
+        } catch (error) {
+          return next(error);
+        }
+      });
 
-  route.delete(`/:articleId`, [idArticleValidator, articleExist(articleService)], async (req, res, next) => {
-    try {
-      const {articleId} = req.params;
-      const deleteRes = await articleService.delete(articleId);
-      return res
+  route.delete(`/:articleId`,
+      [authenticateJwt, idArticleValidator, articleExist(articleService)],
+      async (req, res, next) => {
+        try {
+          const {articleId} = req.params;
+          const deleteRes = await articleService.delete(articleId);
+          return res
         .status(HttpCode.NO_CONTENT)
         .send(deleteRes);
-    } catch (error) {
-      return next(error);
-    }
-  });
+        } catch (error) {
+          return next(error);
+        }
+      });
 
-  route.post(`/:articleId/comments`, [idArticleValidator, articleExist(articleService), commentValidator], async (req, res, next) => {
-    try {
-      const {articleId} = req.params;
-      const createRes = await commentService.create(articleId, req.body);
-      return res
+  route.post(`/:articleId/comments`,
+      [authenticateJwt, idArticleValidator, articleExist(articleService), commentValidator],
+      async (req, res, next) => {
+        try {
+          const {articleId} = req.params;
+          const createRes = await commentService.create(articleId, req.body);
+          return res
         .status(HttpCode.CREATED)
         .json(createRes);
-    } catch (error) {
-      return next(error);
-    }
-  });
+        } catch (error) {
+          return next(error);
+        }
+      });
 
   route.get(`/:articleId/comments`, [idArticleValidator, articleExist(articleService)], async (req, res, next) => {
     try {
@@ -111,7 +118,7 @@ module.exports = (app, articleService, commentService) => {
 
   route.delete(
       `/:articleId/comments/:commentId`,
-      [idArticleValidator, articleExist(articleService), idCommentValidator, commentExist(commentService)],
+      [authenticateJwt, idArticleValidator, articleExist(articleService), idCommentValidator, commentExist(commentService)],
       async (req, res, next) => {
         try {
           const {commentId} = req.params;
