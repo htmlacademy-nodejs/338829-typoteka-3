@@ -69,8 +69,8 @@ module.exports = (app, usersService, tokenService) => {
             .send(``);
         }
 
-        const {id, avatar} = userData;
-        const {accessToken, refreshToken} = jwtHelper({id, avatar});
+        const {id, avatar, name, surname, email} = userData;
+        const {accessToken, refreshToken} = jwtHelper({id, avatar, name, surname, email});
 
         await tokenService.delete(token);
         await tokenService.add(refreshToken);

@@ -44,5 +44,7 @@ module.exports = Joi.object({
       'any.required': `"confirm_password" ${RegisterMessage.REQUIRED_FIELD}`
     }),
   avatar: Joi
-    .string().allow(null, ``)
+    .string().allow(null, ``),
+  _csrf: Joi
+    .string().allow(null, ``),
 });

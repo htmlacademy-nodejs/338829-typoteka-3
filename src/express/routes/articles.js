@@ -1,7 +1,7 @@
 'use strict';
 
 const express = require(`express`);
-const {pictureUpload, privateRoute} = require(`../middlewares`);
+const {pictureUpload, privateRoute, csrfProtection} = require(`../middlewares`);
 const {HttpCode} = require(`../../constants`);
 const {axiosApi} = require(`../axios-api/axios-api`);
 const {getCategoryArticle, getPictureArticle, getErrorMessage} = require(`../../utils`);
@@ -41,7 +41,7 @@ articlesRouter.get(`/category/:id`, async (req, res, next) => {
   }
 });
 
-articlesRouter.get(`/add`, privateRoute, async (req, res, next) => {
+articlesRouter.get(`/add`, [privateRoute, csrfProtection], async (req, res, next) => {
   try {
     const {isAuth, isAdmin, userData} = res.locals.auth;
     const categories = await axiosApi.getCategories();
@@ -53,14 +53,15 @@ articlesRouter.get(`/add`, privateRoute, async (req, res, next) => {
         categories: []
       },
       categories,
-      message: {}
+      message: {},
+      csrfToken: req.csrfToken()
     });
   } catch (error) {
     return next(error);
   }
 });
 
-articlesRouter.post(`/add`, [privateRoute, pictureUpload.single(`img`)], async (req, res) => {
+articlesRouter.post(`/add`, [privateRoute, pictureUpload.single(`img`), csrfProtection], async (req, res) => {
   const {body, file} = req;
 
   const newArticle = {
@@ -84,12 +85,13 @@ articlesRouter.post(`/add`, [privateRoute, pictureUpload.single(`img`)], async (
       userData,
       newArticle,
       categories,
-      message: getErrorMessage(err.response.data.message)
+      message: getErrorMessage(err.response.data.message),
+      csrfToken: req.csrfToken()
     });
   }
 });
 
-articlesRouter.get(`/edit/:id`, privateRoute, async (req, res) => {
+articlesRouter.get(`/edit/:id`, [privateRoute, csrfProtection], async (req, res) => {
   const {isAuth, isAdmin, userData} = res.locals.auth;
 
   try {
@@ -107,7 +109,8 @@ articlesRouter.get(`/edit/:id`, privateRoute, async (req, res) => {
         categories: editArticle.categories.map((cat) => String(cat.id))
       },
       categories,
-      message: {}
+      message: {},
+      csrfToken: req.csrfToken()
     });
   } catch (error) {
     return res
@@ -120,7 +123,7 @@ articlesRouter.get(`/edit/:id`, privateRoute, async (req, res) => {
   }
 });
 
-articlesRouter.post(`/edit/:id`, [privateRoute, pictureUpload.single(`img`)], async (req, res) => {
+articlesRouter.post(`/edit/:id`, [privateRoute, pictureUpload.single(`img`), csrfProtection], async (req, res) => {
   const {id} = req.params;
   const {body, file} = req;
 
@@ -146,12 +149,13 @@ articlesRouter.post(`/edit/:id`, [privateRoute, pictureUpload.single(`img`)], as
       articleId: id,
       editArticle,
       categories,
-      message: getErrorMessage(err.response.data.message)
+      message: getErrorMessage(err.response.data.message),
+      csrfToken: req.csrfToken()
     });
   }
 });
 
-articlesRouter.get(`/:id`, async (req, res) => {
+articlesRouter.get(`/:id`, csrfProtection, async (req, res) => {
   const {isAuth, isAdmin, userData} = res.locals.auth;
 
   try {
@@ -164,7 +168,8 @@ articlesRouter.get(`/:id`, async (req, res) => {
       userData,
       article,
       categories,
-      message: {}
+      message: {},
+      csrfToken: req.csrfToken()
     });
   } catch (error) {
     return res
@@ -177,7 +182,7 @@ articlesRouter.get(`/:id`, async (req, res) => {
   }
 });
 
-articlesRouter.post(`/:id`, privateRoute, async (req, res) => {
+articlesRouter.post(`/:id`, [privateRoute, csrfProtection], async (req, res) => {
   const {id = ``} = req.params;
   const {isAuth, isAdmin, userData, accessToken} = res.locals.auth;
 
@@ -195,7 +200,8 @@ articlesRouter.post(`/:id`, privateRoute, async (req, res) => {
       userData,
       article,
       categories,
-      message: getErrorMessage(err.response.data.message)
+      message: getErrorMessage(err.response.data.message),
+      csrfToken: req.csrfToken()
     });
   }
 });

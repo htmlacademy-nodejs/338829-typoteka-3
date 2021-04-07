@@ -1,7 +1,7 @@
 mixin getUserName(userData)
   -
     const getName = (user) => {
-      return (user.name && user.surName) && `${user.name} ${user.surName}`
+      return `${user.name} ${user.surname}`
     }
   p #{getName(userData)}
 

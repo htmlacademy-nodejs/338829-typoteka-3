@@ -5,7 +5,7 @@ const express = require(`express`);
 const multer = require(`multer`);
 
 const {axiosApi} = require(`../axios-api/axios-api`);
-const {pictureUpload, privateRoute} = require(`../middlewares`);
+const {pictureUpload, privateRoute, csrfProtection} = require(`../middlewares`);
 const {getErrorMessage} = require(`../../utils`);
 const {LIMIT_PER_PAGE} = require(`../../constants`);
 
@@ -53,7 +53,7 @@ rootRouter.get(`/`, async (req, res, next) => {
   }
 });
 
-rootRouter.get(`/register`, (req, res) => {
+rootRouter.get(`/register`, csrfProtection, (req, res) => {
   const {isAuth, isAdmin, userData} = res.locals.auth;
   return res.render(`pages/sign-up`, {
     newUser: {
@@ -67,11 +67,12 @@ rootRouter.get(`/register`, (req, res) => {
     message: {},
     userData,
     isAuth,
-    isAdmin
+    isAdmin,
+    csrfToken: req.csrfToken()
   });
 });
 
-rootRouter.post(`/register`, pictureUpload.single(`avatar`), async (req, res) => {
+rootRouter.post(`/register`, [pictureUpload.single(`avatar`), csrfProtection], async (req, res) => {
   const {body, file} = req;
   const {isAuth, isAdmin, userData} = res.locals.auth;
 
@@ -94,12 +95,13 @@ rootRouter.post(`/register`, pictureUpload.single(`avatar`), async (req, res) =>
         password: ``,
         confirm_password: ``
       },
-      message: getErrorMessage(err.response.data.message)
+      message: getErrorMessage(err.response.data.message),
+      csrfToken: req.csrfToken()
     });
   }
 });
 
-rootRouter.get(`/login`, (req, res) => {
+rootRouter.get(`/login`, csrfProtection, (req, res) => {
   const {isAuth, isAdmin, userData} = res.locals.auth;
   return res.render(`pages/login`, {
     login: {
@@ -109,11 +111,12 @@ rootRouter.get(`/login`, (req, res) => {
     message: {},
     isAuth,
     isAdmin,
-    userData
+    userData,
+    csrfToken: req.csrfToken()
   });
 });
 
-rootRouter.post(`/login`, upload.none(), async (req, res) => {
+rootRouter.post(`/login`, [upload.none(), csrfProtection], async (req, res) => {
   const {email, password} = req.body;
   try {
     const {accessToken, refreshToken} = await axiosApi.login({email, password});
@@ -131,7 +134,8 @@ rootRouter.post(`/login`, upload.none(), async (req, res) => {
       message: getErrorMessage(err.response.data.message),
       isAuth,
       isAdmin,
-      userData
+      userData,
+      csrfToken: req.csrfToken()
     });
   }
 });

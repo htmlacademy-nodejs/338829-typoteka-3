@@ -47,6 +47,7 @@ block content
                 label
                   input.visually-hidden(type='file' name='avatar')
                   | Загрузить фото профиля
+              input(type='hidden' name='_csrf' value=csrfToken)
               button.form__submit-btn.form__submit-btn--register.button.button--colored(type='submit') Зарегистрироваться
           .popup__form.popup__form--active.form.form--log-in
             form(action='/login' method='POST' enctype='multipart/form-data')
@@ -58,6 +59,7 @@ block content
                 label
                   input(type='password' name='password' placeholder='Пароль' required)
               +errorLoginForm(message.password)
+              input(type='hidden' name='_csrf' value=csrfToken)
               button.form__submit-btn.form__submit-btn--log-in.button.button--colored(type='submit') Войти
         .modal__overlay
     footer.footer

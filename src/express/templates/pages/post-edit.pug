@@ -64,6 +64,7 @@ block content
                     label
                       textarea(rows='5' name="fullText" placeholder='Полный текст публикации') #{editArticle.fullText}
                   +errorFormEl(message.fullText)
+                  input(type='hidden' name='_csrf' value=csrfToken)
         .modal__overlay
 
 block scripts
