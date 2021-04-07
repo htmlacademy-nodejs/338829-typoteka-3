@@ -6,7 +6,13 @@ const Sequelize = require(`sequelize`);
 
 const initDB = require(`../../lib/init-db`);
 const articlesRoutes = require(`./articles-routes`);
-const {ArticleService, CommentService} = require(`../../data-service`);
+const userRoutes = require(`../user-routes/user-routes`);
+const {
+  ArticleService,
+  CommentService,
+  UsersService,
+  TokenService
+} = require(`../../data-service`);
 
 const mockCategories = [
   `Графика`,
@@ -42,15 +48,29 @@ const mockArticles = [
   }
 ];
 
+const mockUsers = [{
+  "email": `admin@local.localhost`,
+  "name": `Admin`,
+  "surname": `Admin`,
+  "password": `222222`,
+  "confirm_password": `222222`
+}];
+
+const authUser = {
+  "email": `admin@local.localhost`,
+  "password": `222222`,
+};
+
 const {HttpCode} = require(`../../../constants`);
 
 const createApp = async () => {
   const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
-  await initDB(mockDB, {categories: mockCategories, articles: mockArticles});
+  await initDB(mockDB, {categories: mockCategories, articles: mockArticles, users: mockUsers});
 
   const app = express();
   app.use(express.json());
   articlesRoutes(app, new ArticleService(mockDB), new CommentService(mockDB));
+  userRoutes(app, new UsersService(mockDB), new TokenService(mockDB));
 
   return app;
 };
@@ -137,6 +157,7 @@ describe(`CREATE: API article`, () => {
   let app;
   let response;
   let newArticle;
+  let loginResponse;
 
   beforeAll(async () => {
     app = await createApp();
@@ -147,12 +168,15 @@ describe(`CREATE: API article`, () => {
       "fullText": `Забавным примером использования нейронной сети`,
       "createdAt": `2020-11-05 04:50:04`
     };
+
+    loginResponse = await request(app).post(`/user/login`).send(authUser);
   });
 
   describe(`Correctly`, () => {
     beforeAll(async () => {
       response = await request(app)
         .post(`/articles`)
+        .set(`authorization`, `Bearer ${loginResponse.body.accessToken}`)
         .send(newArticle);
     });
 
@@ -175,6 +199,7 @@ describe(`CREATE: API article`, () => {
 
         const badResponse = await request(app)
           .post(`/articles`)
+          .set(`authorization`, `Bearer ${loginResponse.body.accessToken}`)
           .send(badArticle);
 
         expect(badResponse.statusCode).toBe(HttpCode.BAD_REQUEST);
@@ -187,6 +212,7 @@ describe(`UPDATE: API article`, () => {
   let app;
   let response;
   let updateArticle;
+  let loginResponse;
 
   beforeAll(async () => {
     app = await createApp();
@@ -197,12 +223,15 @@ describe(`UPDATE: API article`, () => {
       "fullText": `Забавным примером использования нейронной сети`,
       "createdAt": `2020-11-05 04:50:04`
     };
+
+    loginResponse = await request(app).post(`/user/login`).send(authUser);
   });
 
   describe(`Correctly`, () => {
     beforeAll(async () => {
       response = await request(app)
         .put(`/articles/1`)
+        .set(`authorization`, `Bearer ${loginResponse.body.accessToken}`)
         .send(updateArticle);
     });
 
@@ -215,6 +244,7 @@ describe(`UPDATE: API article`, () => {
     test(`API returns status code 400 when trying to change articles id = NOEXST`, async () => {
       const notFoundResponse = await request(app)
         .put(`/articles/NOEXST`)
+        .set(`authorization`, `Bearer ${loginResponse.body.accessToken}`)
         .send(updateArticle);
 
       expect(notFoundResponse.statusCode).toBe(HttpCode.BAD_REQUEST);
@@ -223,6 +253,7 @@ describe(`UPDATE: API article`, () => {
     test(`API returns status code 404 when trying to change articles id = 10`, async () => {
       const notFoundResponse = await request(app)
         .put(`/articles/10`)
+        .set(`authorization`, `Bearer ${loginResponse.body.accessToken}`)
         .send(updateArticle);
 
       expect(notFoundResponse.statusCode).toBe(HttpCode.NOT_FOUND);
@@ -234,6 +265,7 @@ describe(`UPDATE: API article`, () => {
 
       const badResponse = await request(app)
         .put(`/articles/1`)
+        .set(`authorization`, `Bearer ${loginResponse.body.accessToken}`)
         .send(invalidArticle);
 
       expect(badResponse.statusCode).toBe(HttpCode.BAD_REQUEST);
@@ -244,15 +276,19 @@ describe(`UPDATE: API article`, () => {
 describe(`DELETE: API article`, () => {
   let app;
   let response;
+  let loginResponse;
 
   beforeAll(async () => {
     app = await createApp();
+    loginResponse = await request(app).post(`/user/login`).send(authUser);
   });
 
   describe(`Correctly`, () => {
     beforeAll(async () => {
       const articleId = `1`;
-      response = await request(app).delete(`/articles/${articleId}`);
+      response = await request(app)
+        .delete(`/articles/${articleId}`)
+        .set(`authorization`, `Bearer ${loginResponse.body.accessToken}`);
     });
 
     test(`Status code 204`, () => {
@@ -267,12 +303,18 @@ describe(`DELETE: API article`, () => {
 
   describe(`Incorrectly`, () => {
     test(`API returns status code 400 when trying to delete non-existent article`, async () => {
-      const notFoundResponse = await request(app).put(`/articles/NOEXST`);
+      const notFoundResponse = await request(app)
+        .put(`/articles/NOEXST`)
+        .set(`authorization`, `Bearer ${loginResponse.body.accessToken}`);
+
       expect(notFoundResponse.statusCode).toBe(HttpCode.BAD_REQUEST);
     });
 
     test(`API returns status code 404 when trying to change article id = 10`, async () => {
-      const notFoundResponse = await request(app).delete(`/articles/10`);
+      const notFoundResponse = await request(app)
+        .delete(`/articles/10`)
+        .set(`authorization`, `Bearer ${loginResponse.body.accessToken}`);
+
       expect(notFoundResponse.statusCode).toBe(HttpCode.NOT_FOUND);
     });
   });
@@ -337,10 +379,13 @@ describe(`CREATE: API comments`, () => {
   let app;
   let response;
   let articleId;
+  let loginResponse;
 
   beforeAll(async () => {
     app = await createApp();
     articleId = `1`;
+
+    loginResponse = await request(app).post(`/user/login`).send(authUser);
   });
 
   describe(`Correctly`, () => {
@@ -353,6 +398,7 @@ describe(`CREATE: API comments`, () => {
 
       response = await request(app)
         .post(`/articles/${articleId}/comments`)
+        .set(`authorization`, `Bearer ${loginResponse.body.accessToken}`)
         .send(newComment);
     });
 
@@ -376,6 +422,7 @@ describe(`CREATE: API comments`, () => {
     test(`Status code 400 with non-existent article`, async () => {
       const notfoundResponse = await request(app)
         .post(`/articles/NOEXST/comments`)
+        .set(`authorization`, `Bearer ${loginResponse.body.accessToken}`)
         .send(badComment);
 
       expect(notfoundResponse.statusCode).toBe(HttpCode.BAD_REQUEST);
@@ -384,6 +431,7 @@ describe(`CREATE: API comments`, () => {
     test(`Status code 400, invalid comment`, async () => {
       const badResponse = await request(app)
         .post(`/articles/${articleId}/comments`)
+        .set(`authorization`, `Bearer ${loginResponse.body.accessToken}`)
         .send(badComment);
 
       expect(badResponse.statusCode).toBe(HttpCode.BAD_REQUEST);
@@ -392,6 +440,7 @@ describe(`CREATE: API comments`, () => {
     test(`Status code 404 with not found article`, async () => {
       const notfoundResponse = await request(app)
         .post(`/articles/10/comments`)
+        .set(`authorization`, `Bearer ${loginResponse.body.accessToken}`)
         .send(badComment);
 
       expect(notfoundResponse.statusCode).toBe(HttpCode.NOT_FOUND);
@@ -404,16 +453,21 @@ describe(`DELETE: API comments`, () => {
   let response;
   let articleId;
   let commentId;
+  let loginResponse;
 
   beforeAll(async () => {
     app = await createApp();
     articleId = `1`;
     commentId = `1`;
+
+    loginResponse = await request(app).post(`/user/login`).send(authUser);
   });
 
   describe(`Correctly`, () => {
     beforeAll(async () => {
-      response = await request(app).delete(`/articles/${articleId}/comments/${commentId}`);
+      response = await request(app)
+        .delete(`/articles/${articleId}/comments/${commentId}`)
+        .set(`authorization`, `Bearer ${loginResponse.body.accessToken}`);
     });
 
     test(`Status code 204`, () => {
@@ -428,17 +482,26 @@ describe(`DELETE: API comments`, () => {
 
   describe(`Incorrectly articleId & commentId`, () => {
     test(`Status code 400 with non-existent article`, async () => {
-      const notfoundResponse = await request(app).delete(`/articles/NOEXST/comments/${commentId}`);
+      const notfoundResponse = await request(app)
+        .delete(`/articles/NOEXST/comments/${commentId}`)
+        .set(`authorization`, `Bearer ${loginResponse.body.accessToken}`);
+
       expect(notfoundResponse.statusCode).toBe(HttpCode.BAD_REQUEST);
     });
 
     test(`Status code 400 with non-existent comment`, async () => {
-      const notfoundResponse = await request(app).delete(`/articles/${articleId}/comments/NOEXST`);
+      const notfoundResponse = await request(app)
+        .delete(`/articles/${articleId}/comments/NOEXST`)
+        .set(`authorization`, `Bearer ${loginResponse.body.accessToken}`);
+
       expect(notfoundResponse.statusCode).toBe(HttpCode.BAD_REQUEST);
     });
 
     test(`Response to equal "commentId" must be a number"`, async () => {
-      const notfoundResponse = await request(app).delete(`/articles/${articleId}/comments/NOEXST`);
+      const notfoundResponse = await request(app)
+        .delete(`/articles/${articleId}/comments/NOEXST`)
+        .set(`authorization`, `Bearer ${loginResponse.body.accessToken}`);
+
       expect(notfoundResponse.body).toStrictEqual({
         "data": {"articleId": `1`, "commentId": `NOEXST`},
         "message": [`"commentId" must be a number`]
@@ -448,12 +511,18 @@ describe(`DELETE: API comments`, () => {
 
   describe(`Correctly Not found`, () => {
     test(`Status code 404 with non-existent article`, async () => {
-      const notfoundResponse = await request(app).delete(`/articles/10/comments/${commentId}`);
+      const notfoundResponse = await request(app)
+        .delete(`/articles/10/comments/${commentId}`)
+        .set(`authorization`, `Bearer ${loginResponse.body.accessToken}`);
+
       expect(notfoundResponse.statusCode).toBe(HttpCode.NOT_FOUND);
     });
 
     test(`Status code 404 with non-existent comment`, async () => {
-      const notfoundResponse = await request(app).delete(`/articles/${articleId}/comments/100`);
+      const notfoundResponse = await request(app)
+        .delete(`/articles/${articleId}/comments/100`)
+        .set(`authorization`, `Bearer ${loginResponse.body.accessToken}`);
+
       expect(notfoundResponse.statusCode).toBe(HttpCode.NOT_FOUND);
     });
   });
