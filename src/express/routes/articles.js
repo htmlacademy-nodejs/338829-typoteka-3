@@ -12,7 +12,7 @@ articlesRouter.use(express.urlencoded({extended: true}));
 
 articlesRouter.get(`/category/:id`, async (req, res, next) => {
   try {
-    const {isAuth, isAdmin} = res.locals.auth;
+    const {isAuth, isAdmin, userData} = res.locals.auth;
 
     const catId = Number(req.params.id);
     const {page = 1} = req.query;
@@ -26,10 +26,10 @@ articlesRouter.get(`/category/:id`, async (req, res, next) => {
     ]);
 
     const totalPages = Math.ceil(count / limit);
-
     return res.render(`pages/articles-by-category`, {
       isAuth,
       isAdmin,
+      userData,
       categories,
       catId,
       articles,
@@ -39,15 +39,16 @@ articlesRouter.get(`/category/:id`, async (req, res, next) => {
   } catch (error) {
     return next(error);
   }
-
 });
 
 articlesRouter.get(`/add`, privateRoute, async (req, res, next) => {
   try {
+    const {isAuth, isAdmin, userData} = res.locals.auth;
     const categories = await axiosApi.getCategories();
     return res.render(`pages/post-new`, {
-      isAuth: true,
-      isAdmin: true,
+      isAuth,
+      isAdmin,
+      userData,
       newArticle: {
         categories: []
       },
@@ -71,12 +72,16 @@ articlesRouter.post(`/add`, [privateRoute, pictureUpload.single(`img`)], async (
     categories: getCategoryArticle(body.categories)
   };
 
+  const {isAuth, isAdmin, userData, accessToken} = res.locals.auth;
   try {
-    await axiosApi.createArticle(newArticle);
-    res.redirect(`/my`);
+    await axiosApi.createArticle(newArticle, accessToken);
+    return res.redirect(`/my`);
   } catch (err) {
     const categories = await axiosApi.getCategories();
-    res.render(`pages/post-new`, {
+    return res.render(`pages/post-new`, {
+      isAuth,
+      isAdmin,
+      userData,
       newArticle,
       categories,
       message: getErrorMessage(err.response.data.message)
@@ -85,14 +90,17 @@ articlesRouter.post(`/add`, [privateRoute, pictureUpload.single(`img`)], async (
 });
 
 articlesRouter.get(`/edit/:id`, privateRoute, async (req, res) => {
+  const {isAuth, isAdmin, userData} = res.locals.auth;
+
   try {
     const {id} = req.params;
     const categories = await axiosApi.getCategories({count: true});
     const editArticle = await axiosApi.getArticle({id});
 
-    res.render(`pages/post-edit`, {
-      isAuth: true,
-      isAdmin: true,
+    return res.render(`pages/post-edit`, {
+      isAuth,
+      isAdmin,
+      userData,
       articleId: id,
       editArticle: {
         ...editArticle,
@@ -102,9 +110,13 @@ articlesRouter.get(`/edit/:id`, privateRoute, async (req, res) => {
       message: {}
     });
   } catch (error) {
-    res
+    return res
       .status(HttpCode.NOT_FOUND)
-      .render(`errors/404`);
+      .render(`errors/404`, {
+        isAuth,
+        isAdmin,
+        userData
+      });
   }
 });
 
@@ -121,12 +133,16 @@ articlesRouter.post(`/edit/:id`, [privateRoute, pictureUpload.single(`img`)], as
     categories: getCategoryArticle(body.categories)
   };
 
+  const {isAuth, isAdmin, userData, accessToken} = res.locals.auth;
   try {
-    await axiosApi.updateArticle(Number(id), editArticle);
+    await axiosApi.updateArticle(Number(id), editArticle, accessToken);
     res.redirect(`/my`);
   } catch (err) {
     const categories = await axiosApi.getCategories({count: true});
     res.render(`pages/post-edit`, {
+      isAuth,
+      isAdmin,
+      userData,
       articleId: id,
       editArticle,
       categories,
@@ -136,37 +152,47 @@ articlesRouter.post(`/edit/:id`, [privateRoute, pictureUpload.single(`img`)], as
 });
 
 articlesRouter.get(`/:id`, async (req, res) => {
-  try {
-    const {isAuth, isAdmin} = res.locals.auth;
+  const {isAuth, isAdmin, userData} = res.locals.auth;
 
+  try {
     const categories = await axiosApi.getCategories({count: true});
     const article = await axiosApi.getArticle({id: req.params.id, comments: true});
 
-    res.render(`pages/post`, {
+    return res.render(`pages/post`, {
       isAuth,
       isAdmin,
+      userData,
       article,
       categories,
       message: {}
     });
   } catch (error) {
-    res
+    return res
       .status(HttpCode.NOT_FOUND)
-      .render(`errors/404`);
+      .render(`errors/404`, {
+        isAuth,
+        isAdmin,
+        userData
+      });
   }
 });
 
 articlesRouter.post(`/:id`, privateRoute, async (req, res) => {
   const {id = ``} = req.params;
+  const {isAuth, isAdmin, userData, accessToken} = res.locals.auth;
 
   try {
     const {text} = req.body;
-    await axiosApi.createComment(id, {text});
-    res.redirect(`/articles/${id}`);
+    await axiosApi.createComment(id, {text}, accessToken);
+    return res.redirect(`/articles/${id}`);
   } catch (err) {
     const categories = await axiosApi.getCategories({count: true});
     const article = await axiosApi.getArticle({id, comments: true});
-    res.render(`pages/post`, {
+
+    return res.render(`pages/post`, {
+      isAuth,
+      isAdmin,
+      userData,
       article,
       categories,
       message: getErrorMessage(err.response.data.message)

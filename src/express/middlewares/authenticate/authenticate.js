@@ -1,10 +1,42 @@
 'use strict';
+const jwt = require(`jsonwebtoken`);
+const {axiosApi} = require(`../../axios-api/axios-api`);
+const {JWT_ACCESS_SECRET} = require(`../../../constants`);
 
 module.exports = (req, res, next) => {
-  const {_ac: accessToken, _rf: refreshToken} = req.cookies;
-  const isAuth = Boolean(accessToken) && Boolean(refreshToken);
-  const isAdmin = false; // fake
+  let {_ac: accessToken, _rf: refreshToken} = req.cookies;
 
-  res.locals.auth = {isAuth, isAdmin, accessToken, refreshToken};
+  if (accessToken && refreshToken) {
+    return jwt.verify(accessToken, JWT_ACCESS_SECRET, async (err, userData) => {
+      const isAdmin = userData && userData.id === 1;
+
+      if (err) {
+        try {
+          const {accessToken: acToken, refreshToken: refToken} = await axiosApi.refresh(refreshToken);
+          res.cookie(`_ac`, acToken);
+          res.cookie(`_rf`, refToken);
+
+          res.locals.auth = {
+            isAuth: true,
+            isAdmin,
+            userData,
+            accessToken: acToken,
+            refreshToken: refToken
+          };
+          return next();
+        } catch (error) {
+          res.clearCookie(`_ac`);
+          res.clearCookie(`_rf`);
+          res.locals.auth = {isAuth: false, isAdmin: false, userData: {}, accessToken, refreshToken};
+          return next();
+        }
+      }
+
+      res.locals.auth = {isAuth: true, isAdmin, userData, accessToken, refreshToken};
+      return next();
+    });
+  }
+
+  res.locals.auth = {isAuth: false, isAdmin: false, userData: {}, accessToken, refreshToken};
   return next();
 };

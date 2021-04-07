@@ -1,6 +1,7 @@
 'use strict';
 
 const express = require(`express`);
+const helmet = require(`helmet`);
 const routes = require(`../api`);
 const createSequelize = require(`../lib/sequelize`);
 const {getLogger} = require(`../lib/logger`);
@@ -23,6 +24,14 @@ const startHttpServer = (port) => {
   app.use(express.json());
   app.use(requestLogger(logger));
   app.use(API_PREFIX, routes);
+
+  app.use(helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: [`'self'`],
+      scriptSrc: [`'self'`],
+    }
+  }));
+  app.use(helmet.xssFilter());
 
   app.use((req, res) => {
     logger.error(`Route not found: ${req.url}`);

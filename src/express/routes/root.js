@@ -17,7 +17,7 @@ rootRouter.use(express.urlencoded({extended: true}));
 rootRouter.get(`/`, async (req, res, next) => {
   try {
     const {page = 1} = req.query;
-    const {isAuth, isAdmin} = res.locals.auth;
+    const {isAuth, isAdmin, userData} = res.locals.auth;
 
     const limit = LIMIT_PER_PAGE;
     const offset = (Number(page) - 1) * limit;
@@ -31,14 +31,18 @@ rootRouter.get(`/`, async (req, res, next) => {
     ]);
 
     if (count === 0) {
-      return res.render(`pages/main-empty`, {isAuth, isAdmin});
+      return res.render(`pages/main-empty`, {
+        isAuth,
+        isAdmin,
+        userData
+      });
     }
 
     const totalPages = Math.ceil(count / limit);
-
     return res.render(`pages/main`, {
       isAuth,
       isAdmin,
+      userData,
       articles,
       categories,
       totalPages,
@@ -50,8 +54,7 @@ rootRouter.get(`/`, async (req, res, next) => {
 });
 
 rootRouter.get(`/register`, (req, res) => {
-  const {isAuth, isAdmin} = res.locals.auth;
-
+  const {isAuth, isAdmin, userData} = res.locals.auth;
   return res.render(`pages/sign-up`, {
     newUser: {
       email: ``,
@@ -62,6 +65,7 @@ rootRouter.get(`/register`, (req, res) => {
       avatar: ``
     },
     message: {},
+    userData,
     isAuth,
     isAdmin
   });
@@ -69,6 +73,7 @@ rootRouter.get(`/register`, (req, res) => {
 
 rootRouter.post(`/register`, pictureUpload.single(`avatar`), async (req, res) => {
   const {body, file} = req;
+  const {isAuth, isAdmin, userData} = res.locals.auth;
 
   const newUser = {
     ...body,
@@ -80,6 +85,9 @@ rootRouter.post(`/register`, pictureUpload.single(`avatar`), async (req, res) =>
     return res.redirect(`/login`);
   } catch (err) {
     return res.render(`pages/sign-up`, {
+      isAuth,
+      isAdmin,
+      userData,
       newUser: {
         ...newUser,
         avatar: newUser.avatar || body.avatar,
@@ -92,8 +100,7 @@ rootRouter.post(`/register`, pictureUpload.single(`avatar`), async (req, res) =>
 });
 
 rootRouter.get(`/login`, (req, res) => {
-  const {isAuth, isAdmin} = res.locals.auth;
-
+  const {isAuth, isAdmin, userData} = res.locals.auth;
   return res.render(`pages/login`, {
     login: {
       email: ``,
@@ -101,7 +108,8 @@ rootRouter.get(`/login`, (req, res) => {
     },
     message: {},
     isAuth,
-    isAdmin
+    isAdmin,
+    userData
   });
 });
 
@@ -114,12 +122,16 @@ rootRouter.post(`/login`, upload.none(), async (req, res) => {
 
     return res.redirect(`/`);
   } catch (err) {
+    const {isAuth, isAdmin, userData} = res.locals.auth;
     return res.render(`pages/login`, {
       login: {
         email,
         password: ``
       },
       message: getErrorMessage(err.response.data.message),
+      isAuth,
+      isAdmin,
+      userData
     });
   }
 });
@@ -140,13 +152,13 @@ rootRouter.get(`/logout`, privateRoute, async (req, res, next) => {
 
 rootRouter.get(`/search`, async (req, res) => {
   const {search: searchValue} = req.query;
-  const {isAuth, isAdmin} = res.locals.auth;
-
+  const {isAuth, isAdmin, userData} = res.locals.auth;
   try {
     const articles = await axiosApi.searchArticles(searchValue);
     return res.render(`pages/search`, {
       isAuth,
       isAdmin,
+      userData,
       articles,
       searchValue
     });
@@ -154,6 +166,7 @@ rootRouter.get(`/search`, async (req, res) => {
     return res.render(`pages/search`, {
       isAuth,
       isAdmin,
+      userData,
       articles: [],
       searchValue: searchValue ? searchValue : null
     });
@@ -161,13 +174,13 @@ rootRouter.get(`/search`, async (req, res) => {
 });
 
 rootRouter.get(`/categories`, async (req, res, next) => {
-  const {isAuth, isAdmin} = res.locals.auth;
-
+  const {isAuth, isAdmin, userData} = res.locals.auth;
   try {
     const categories = await axiosApi.getCategories();
     return res.render(`pages/all-categories`, {
       isAuth,
       isAdmin,
+      userData,
       categories
     });
   } catch (error) {

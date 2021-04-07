@@ -5,8 +5,13 @@ block content
     header.header.header--error
       a.header__logo.header__logo--404.logo(href='/')
         img(src='/img/icons/logo.svg' alt='логотип Тайпотеки')
-      a.header__registration(href='/register') Регистрация
-      a.header__enter(href='/login') Вход с паролем
+      if isAuth && isAdmin
+        include ../partials/header-admin
+      else if isAuth
+        include ../partials/header-user
+      else
+        a.header__registration(href='/register') Регистрация
+        a.header__enter(href='/login') Вход с паролем
       a.header__search.button.button--search(href='/search' aria-label='поиск по сайту')
     main
       h1.visually-hidden Ошибка 404

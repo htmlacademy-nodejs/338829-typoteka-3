@@ -34,7 +34,6 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, _next) => {
-  console.error(err);
   res.status(HttpCode.INTERNAL_SERVER_ERROR).render(`errors/500`);
 });
 

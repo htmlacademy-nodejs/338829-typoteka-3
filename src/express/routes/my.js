@@ -8,8 +8,14 @@ const myRouter = new Router();
 
 myRouter.get(`/`, privateRoute, async (req, res, next) => {
   try {
+    const {isAuth, isAdmin, userData} = res.locals.auth;
     const {articles} = await axiosApi.getArticles();
-    return res.render(`pages/my`, {articles});
+    return res.render(`pages/my`, {
+      isAuth,
+      isAdmin,
+      userData,
+      articles
+    });
   } catch (error) {
     return next(error);
   }
@@ -17,8 +23,14 @@ myRouter.get(`/`, privateRoute, async (req, res, next) => {
 
 myRouter.get(`/comments`, privateRoute, async (req, res, next) => {
   try {
+    const {isAuth, isAdmin, userData} = res.locals.auth;
     const {articles} = await axiosApi.getArticles({comments: true});
-    return res.render(`pages/comments`, {articles: articles.slice(0, 3)});
+    return res.render(`pages/comments`, {
+      isAuth,
+      isAdmin,
+      userData,
+      articles: articles.slice(0, 3)
+    });
   } catch (error) {
     return next(error);
   }

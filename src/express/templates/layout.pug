@@ -1,3 +1,17 @@
+mixin getUserName(userData)
+  -
+    const getName = (user) => {
+      return (user.name && user.surName) && `${user.name} ${user.surName}`
+    }
+  p #{getName(userData)}
+
+mixin getUserAvatar(userData)
+  -
+    const getAvatar = (user) => {
+      return user.avatar ? `/img/${user.avatar}` : `/img/avatar-5.png`;
+    }
+  img(src=getAvatar(userData) alt='аватар пользователя')
+
 mixin formatDate(date)
   -
     const convert = (dateString) => {

@@ -34,8 +34,8 @@ module.exports = (app, usersService, tokenService) => {
 
   route.post(`/login`, [loginValidator, userAuthenticate(usersService)], async (req, res, next) => {
     try {
-      const {id, avatar} = res.locals.user;
-      const {accessToken, refreshToken} = jwtHelper({id, avatar});
+      const {id, avatar, name, surname, email} = res.locals.user;
+      const {accessToken, refreshToken} = jwtHelper({id, avatar, name, surname, email});
 
       await tokenService.add(refreshToken);
       return res
