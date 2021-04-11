@@ -37,7 +37,7 @@ module.exports = (app, categoryService) => {
   });
 
   route.put(`/:categoryId`,
-      [authenticateJwt, idCategoryValidator, categoryExist(categoryService)],
+      [authenticateJwt, idCategoryValidator, categoryExist(categoryService), categoryValidator],
       async (req, res, next) => {
         try {
           const {categoryId} = req.params;
