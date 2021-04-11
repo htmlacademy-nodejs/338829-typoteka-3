@@ -6,6 +6,8 @@ const articleIdSchema = require(`./article-id-scheme`);
 const commentIdSchema = require(`./comment-id-scheme`);
 const userSchema = require(`./user-schema`);
 const loginSchema = require(`./login-schema`);
+const categorySchema = require(`./category-schema`);
+const categoryIdSchema = require(`./category-id-scheme`);
 
 module.exports = {
   articleSchema,
@@ -13,5 +15,7 @@ module.exports = {
   articleIdSchema,
   commentIdSchema,
   userSchema,
-  loginSchema
+  loginSchema,
+  categorySchema,
+  categoryIdSchema
 };

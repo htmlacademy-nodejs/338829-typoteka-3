@@ -8,6 +8,30 @@ class CategoryService {
     this._Category = sequelize.models.Category;
   }
 
+  create(category) {
+    return this._Category.create(category);
+  }
+
+  async update(id, category) {
+    const [updatedRows] = await this._Category.update(category, {
+      where: {id}
+    });
+
+    return Boolean(updatedRows);
+  }
+
+  delete(id) {
+    const deleteRows = this._Category.destroy({
+      where: {id}
+    });
+
+    return Boolean(deleteRows);
+  }
+
+  findOne(id) {
+    return this._Category.findByPk(id);
+  }
+
   async findAll(hasCount) {
     if (hasCount) {
       const query = `

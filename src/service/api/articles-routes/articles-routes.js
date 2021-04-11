@@ -69,8 +69,8 @@ module.exports = (app, articleService, commentService) => {
           const {articleId} = req.params;
           const updateRes = await articleService.update(articleId, req.body);
           return res
-        .status(HttpCode.NO_CONTENT)
-        .send(updateRes);
+            .status(HttpCode.NO_CONTENT)
+            .send(updateRes);
         } catch (error) {
           return next(error);
         }
@@ -83,8 +83,8 @@ module.exports = (app, articleService, commentService) => {
           const {articleId} = req.params;
           const deleteRes = await articleService.delete(articleId);
           return res
-        .status(HttpCode.NO_CONTENT)
-        .send(deleteRes);
+            .status(HttpCode.NO_CONTENT)
+            .send(deleteRes);
         } catch (error) {
           return next(error);
         }
