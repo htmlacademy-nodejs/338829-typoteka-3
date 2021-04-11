@@ -29,7 +29,7 @@ myRouter.get(`/comments`, privateRoute, async (req, res, next) => {
       isAuth,
       isAdmin,
       userData,
-      articles: articles.slice(0, 3)
+      articles
     });
   } catch (error) {
     return next(error);
