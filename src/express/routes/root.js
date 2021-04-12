@@ -177,19 +177,4 @@ rootRouter.get(`/search`, async (req, res) => {
   }
 });
 
-rootRouter.get(`/categories`, async (req, res, next) => {
-  const {isAuth, isAdmin, userData} = res.locals.auth;
-  try {
-    const categories = await axiosApi.getCategories();
-    return res.render(`pages/all-categories`, {
-      isAuth,
-      isAdmin,
-      userData,
-      categories
-    });
-  } catch (error) {
-    return next(error);
-  }
-});
-
 module.exports = rootRouter;

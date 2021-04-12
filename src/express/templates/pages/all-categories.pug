@@ -11,23 +11,27 @@ block content
     main.main-page.main-page--padding
       section.main-page__category.category
         h1.category__title Категории
+        +errorFormEl(message.name)
         .category__add-form
-          form(action='#' method='POST')
-            input#add-form-add-category(type='text' name='category' placeholder='Новая категория')
+          form(action='/categories' method='POST')
+            input#add-form-add-category(type='text' name='name' placeholder='Новая категория')
             label(for='add-form-add-category')
               span.visually-hidden Добавить категорию
             button.category__button.button.button--category(type='submit') Добавить
+            input(type='hidden' name='_csrf' value=csrfToken)
         ul.category__list
           each category in categories
             li.category__list-item
-              form(action='#' method='POST')
-                input(id='modify-form-category-' + category.id type='text' name='category' value=category.name)
+              form(action='/categories/' + category.id method='POST')
+                input(id='modify-form-category-' + category.id type='text' name='name' value=category.name)
                 label(for='modify-form-category-' + category.id)
                   span.visually-hidden Редактировать категорию
                 button.category__button.button.button--category(type='submit') Сохранить
-                button.category__button.button.button--category(type='button') Удалить
+                button.category__button.button.button--category(type='button' onclick='deleteCat(' + category.id + ')') Удалить
+                input(type='hidden' name='_csrf' value=csrfToken)
     footer.footer.footer--padding
       include ../partials/footer
 
 block scripts
+  script(src='/js/vendor.js')
   script(src='/js/main.js')

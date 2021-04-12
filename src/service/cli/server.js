@@ -41,7 +41,6 @@ const startHttpServer = (port) => {
   });
 
   app.use((err, _req, res, _next) => {
-    console.log(err);
     logger.error(`An error occurred on processing request: ${err.message}`);
     return res
       .status(HttpCode.INTERNAL_SERVER_ERROR)

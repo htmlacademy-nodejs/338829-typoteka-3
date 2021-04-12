@@ -16,6 +16,7 @@ const {authenticate} = require(`./middlewares`);
 const rootRouter = require(`./routes/root`);
 const articlesRouter = require(`./routes/articles`);
 const myRouter = require(`./routes/my`);
+const categoryRouter = require(`./routes/categories`);
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use(authenticate);
 app.use(`/`, rootRouter);
 app.use(`/articles`, articlesRouter);
 app.use(`/my`, myRouter);
+app.use(`/categories`, categoryRouter);
 
 app.use((req, res) => {
   res.status(HttpCode.NOT_FOUND).render(`errors/404`);

@@ -27,11 +27,24 @@ const createApi = (baseURL, timeout = API_TIMEOUT) => {
 
   return {
     api,
-    getArticles: ({limit, offset, comments = false, catId = -1} = {}) => fetch(`/articles`, {params: {limit, offset, comments, catId}}),
+    searchArticles: (query) => fetch(`/search`, {params: {query}}),
+
+    getCategories: ({count = false} = {}) => fetch(`/categories`, {params: {count}}),
+    createCategory: (data, accessToken) => {
+      return fetch(`/categories`, {method: `POST`, data, headers: getAuthHeaders(accessToken)});
+    },
+    updateCategory: (id, data, accessToken) => {
+      return fetch(`/categories/${id}`, {method: `PUT`, data, headers: getAuthHeaders(accessToken)});
+    },
+    deleteCategory: (id, accessToken) => {
+      return fetch(`/categories/${id}`, {method: `DELETE`, headers: getAuthHeaders(accessToken)});
+    },
+
+    getArticles: ({limit, offset, comments = false, catId = -1} = {}) => {
+      return fetch(`/articles`, {params: {limit, offset, comments, catId}});
+    },
     getArticle: ({id, comments = false} = {}) => fetch(`/articles/${id}`, {params: {comments}}),
     getArticleComments: (id) => fetch(`/articles/${id}/comments`),
-    getCategories: ({count = false} = {}) => fetch(`/categories`, {params: {count}}),
-    searchArticles: (query) => fetch(`/search`, {params: {query}}),
     createArticle: (data, accessToken) => {
       return fetch(`/articles`, {method: `POST`, data, headers: getAuthHeaders(accessToken)});
     },
@@ -44,6 +57,7 @@ const createApi = (baseURL, timeout = API_TIMEOUT) => {
     deleteComment: (id, commentId, accessToken) => {
       return fetch(`/articles/${id}/comments/${commentId}`, {method: `DELETE`, headers: getAuthHeaders(accessToken)});
     },
+
     createUser: (user) => fetch(`/user`, {method: `POST`, data: user}),
     login: (auth) => fetch(`/user/login`, {method: `POST`, data: auth}),
     logout: (accessToken, refreshToken) => {

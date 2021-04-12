@@ -349,3 +349,17 @@ function toLogin() {
 function toSignup() {
   window.location.href = '/register';
 }
+
+function deleteCat(catId) {
+  const oReq = new XMLHttpRequest();
+  oReq.onload = function() {
+    if (this.status === 404) {
+      return window.location.href = '/login';
+    }
+
+    return window.location.href = '/categories';
+  };
+
+  oReq.open("delete", `/categories/${catId}`, true);
+  oReq.send();
+}
