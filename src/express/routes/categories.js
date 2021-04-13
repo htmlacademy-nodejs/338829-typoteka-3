@@ -3,7 +3,7 @@ const express = require(`express`);
 const multer = require(`multer`);
 
 const {axiosApi} = require(`../axios-api/axios-api`);
-const {privateRoute, csrfProtection} = require(`../middlewares`);
+const {adminRoute, csrfProtection} = require(`../middlewares`);
 const {getErrorMessage} = require(`../../utils`);
 const {HttpCode} = require(`../../constants`);
 
@@ -12,7 +12,7 @@ const categoryRouter = new express.Router();
 
 categoryRouter.use(express.urlencoded({extended: true}));
 
-categoryRouter.get(`/`, csrfProtection, async (req, res, next) => {
+categoryRouter.get(`/`, [adminRoute, csrfProtection], async (req, res, next) => {
   const {isAuth, isAdmin, userData} = res.locals.auth;
   try {
     const categories = await axiosApi.getCategories();
@@ -29,7 +29,7 @@ categoryRouter.get(`/`, csrfProtection, async (req, res, next) => {
   }
 });
 
-categoryRouter.post(`/`, [privateRoute, upload.none(), csrfProtection], async (req, res) => {
+categoryRouter.post(`/`, [adminRoute, upload.none(), csrfProtection], async (req, res) => {
   const {isAuth, isAdmin, userData, accessToken} = res.locals.auth;
   try {
     await axiosApi.createCategory(req.body, accessToken);
@@ -47,7 +47,7 @@ categoryRouter.post(`/`, [privateRoute, upload.none(), csrfProtection], async (r
   }
 });
 
-categoryRouter.post(`/:categoryId`, [privateRoute, upload.none(), csrfProtection], async (req, res) => {
+categoryRouter.post(`/:categoryId`, [adminRoute, upload.none(), csrfProtection], async (req, res) => {
   const {categoryId} = req.params;
   const {isAuth, isAdmin, userData, accessToken} = res.locals.auth;
   try {
@@ -66,7 +66,7 @@ categoryRouter.post(`/:categoryId`, [privateRoute, upload.none(), csrfProtection
   }
 });
 
-categoryRouter.delete(`/:categoryId`, privateRoute, async (req, res) => {
+categoryRouter.delete(`/:categoryId`, adminRoute, async (req, res) => {
   const {categoryId} = req.params;
   const {accessToken} = res.locals.auth;
   try {

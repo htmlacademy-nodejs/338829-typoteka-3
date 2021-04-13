@@ -8,6 +8,7 @@
     "test::rest": "jest --testPathPattern=/src/service/api",
     "jest": "jest",
     "eslint": "eslint --ext .js src/",
+    "cli": "cross-env node -r dotenv/config ./src/service/service.js",
     "start": "concurrently --prefix \"{time} — {pid}\" --names \"BACKEND, SSR\" --prefix-colors \"green,red\" \"npm:server\" \"npm:start-front-server\"",
     "start::debug": "concurrently --prefix \"{time} — {pid}\" --names \"BACKEND, SSR\" --prefix-colors \"green,red\" \"npm:server::debug\" \"npm:start-front-server\"",
     "server": "cross-env NODE_ENV=production LOG_LEVEL=error nodemon -r dotenv/config ./src/service/service.js --server 3000",

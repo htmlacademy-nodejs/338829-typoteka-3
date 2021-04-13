@@ -2,11 +2,11 @@
 
 const {Router} = require(`express`);
 const {axiosApi} = require(`../axios-api/axios-api`);
-const {privateRoute} = require(`../middlewares`);
+const {adminRoute} = require(`../middlewares`);
 
 const myRouter = new Router();
 
-myRouter.get(`/`, privateRoute, async (req, res, next) => {
+myRouter.get(`/`, adminRoute, async (req, res, next) => {
   try {
     const {isAuth, isAdmin, userData} = res.locals.auth;
     const {articles} = await axiosApi.getArticles();
@@ -21,7 +21,7 @@ myRouter.get(`/`, privateRoute, async (req, res, next) => {
   }
 });
 
-myRouter.get(`/comments`, privateRoute, async (req, res, next) => {
+myRouter.get(`/comments`, adminRoute, async (req, res, next) => {
   try {
     const {isAuth, isAdmin, userData} = res.locals.auth;
     const {articles} = await axiosApi.getArticles({comments: true});

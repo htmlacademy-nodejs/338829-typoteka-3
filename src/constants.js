@@ -130,6 +130,11 @@ const LoginMessage = {
   REQUIRED_FIELD: `Поле обязательно для заполнения`,
 };
 
+const CommentMessage = {
+  EMPTY_VALUE: `Сообщение не может быть пустым, напишите что-нибудь!`,
+  MIN_LENGTH: `Комментарий должен быть не меньше 50 символов`,
+};
+
 const DEFAULT_CLI_COMMAND = CliCommand.HELP;
 
 module.exports = {
@@ -170,5 +175,6 @@ module.exports = {
   CommentSchema,
   UserSchema,
   RegisterMessage,
-  LoginMessage
+  LoginMessage,
+  CommentMessage
 };
