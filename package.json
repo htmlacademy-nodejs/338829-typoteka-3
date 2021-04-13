@@ -8,7 +8,8 @@
     "test::rest": "jest --testPathPattern=/src/service/api",
     "jest": "jest",
     "eslint": "eslint --ext .js src/",
-    "start": "cross-env node -r dotenv/config ./src/service/service.js",
+    "start": "concurrently --prefix \"{time} — {pid}\" --names \"BACKEND, SSR\" --prefix-colors \"green,red\" \"npm:server\" \"npm:start-front-server\"",
+    "start::debug": "concurrently --prefix \"{time} — {pid}\" --names \"BACKEND, SSR\" --prefix-colors \"green,red\" \"npm:server::debug\" \"npm:start-front-server\"",
     "server": "cross-env NODE_ENV=production LOG_LEVEL=error nodemon -r dotenv/config ./src/service/service.js --server 3000",
     "server::debug": "cross-env NODE_ENV=development LOG_LEVEL=debug nodemon -r dotenv/config ./src/service/service.js --server 3000 | pino-pretty",
     "start-front-server": "nodemon ./src/express/index.js"
@@ -38,6 +39,7 @@
     "axios": "0.21.1",
     "bcrypt": "5.0.1",
     "chalk": "4.1.0",
+    "concurrently": "6.0.2",
     "cookie-parser": "1.4.5",
     "csurf": "1.11.0",
     "dotenv": "8.2.0",
