@@ -95,7 +95,8 @@ module.exports = (app, articleService, commentService) => {
       async (req, res, next) => {
         try {
           const {articleId} = req.params;
-          const createRes = await commentService.create(articleId, req.body);
+          const {id: userId} = res.locals.user;
+          const createRes = await commentService.create(articleId, {...req.body, userId});
           return res
         .status(HttpCode.CREATED)
         .json(createRes);

@@ -17,7 +17,7 @@ module.exports = (sequelize) => {
   const Token = defineToken(sequelize);
 
   // один ко многим
-  // связка статья -> коммент
+  // связка статья -> комментарий
   Article.hasMany(Comment, {as: Aliase.COMMENTS, foreignKey: `articleId`});
   Comment.belongsTo(Article, {foreignKey: `articleId`});
 
@@ -26,6 +26,10 @@ module.exports = (sequelize) => {
   Article.belongsToMany(Category, {through: ArticleCategory, as: Aliase.CATEGORIES});
   Category.belongsToMany(Article, {through: ArticleCategory, as: Aliase.ARTICLES});
   Category.hasMany(ArticleCategory, {as: Aliase.ARTICLE_CATEGORIES});
+
+  // связка пользователь -> комментарий
+  User.hasMany(Comment, {as: Aliase.COMMENTS, foreignKey: `userId`});
+  Comment.belongsTo(User, {as: Aliase.USERS, foreignKey: `userId`});
 
   return {
     Category,

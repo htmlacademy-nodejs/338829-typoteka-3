@@ -31,6 +31,7 @@ const generateComments = ({count, comments, articleId}) => {
   return Array(count).fill({}).map(() => ({
     articleId,
     text: shuffle(comments).slice(0, getRandomInt(CommentsRestrict.MIN, CommentsRestrict.MAX)).join(` `),
+    userId: 1
   }));
 };
 

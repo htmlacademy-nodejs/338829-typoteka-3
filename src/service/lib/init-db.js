@@ -6,7 +6,7 @@ const Aliase = require(`../models/aliase`);
 const {BCRYPT_SALT_ROUNDS} = require(`../../constants`);
 
 module.exports = async (sequelize, {categories, articles, users = []}) => {
-  const {Category, Article, User} = defineModels(sequelize);
+  const {Category, Article, User, Comment} = defineModels(sequelize);
   await sequelize.sync({force: true});
 
   const categoryModels = await Category.bulkCreate(categories.map((item) => ({name: item})));
@@ -17,7 +17,14 @@ module.exports = async (sequelize, {categories, articles, users = []}) => {
   }), {});
 
   const articlePromises = articles.map(async (article) => {
-    const articleModel = await Article.create(article, {include: [Aliase.COMMENTS]});
+    const articleModel = await Article.create(article, {
+      include: [{
+        model: Comment,
+        as: Aliase.COMMENTS,
+        include: [Aliase.USERS]
+      }]
+    });
+
     await articleModel.addCategories(
         article.categories.map((name) => categoryIdByName[name])
     );

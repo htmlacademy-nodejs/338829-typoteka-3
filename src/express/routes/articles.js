@@ -1,7 +1,7 @@
 'use strict';
 
 const express = require(`express`);
-const {pictureUpload, adminRoute, csrfProtection} = require(`../middlewares`);
+const {pictureUpload, privateRoute, adminRoute, csrfProtection} = require(`../middlewares`);
 const {HttpCode} = require(`../../constants`);
 const {axiosApi} = require(`../axios-api/axios-api`);
 const {getCategoryArticle, getPictureArticle, getErrorMessage} = require(`../../utils`);
@@ -182,7 +182,7 @@ articlesRouter.get(`/:id`, csrfProtection, async (req, res) => {
   }
 });
 
-articlesRouter.post(`/:id`, [adminRoute, csrfProtection], async (req, res) => {
+articlesRouter.post(`/:id`, [privateRoute, csrfProtection], async (req, res) => {
   const {id = ``} = req.params;
   const {isAuth, isAdmin, userData, accessToken} = res.locals.auth;
 
