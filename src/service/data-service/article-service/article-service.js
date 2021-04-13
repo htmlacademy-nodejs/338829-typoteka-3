@@ -38,10 +38,17 @@ class ArticleService {
   }
 
   async findAll(hasComments) {
-    const articles = await this._Article.findAll({
-      include: hasComments ? [Aliase.CATEGORIES, Aliase.COMMENTS] : [Aliase.CATEGORIES]
-    });
+    const include = [Aliase.CATEGORIES];
 
+    if (hasComments) {
+      include.push({
+        model: this._Comment,
+        as: Aliase.COMMENTS,
+        include: [Aliase.USERS]
+      });
+    }
+
+    const articles = await this._Article.findAll({include});
     return {
       count: articles.length,
       articles: articles.map((item) => item.get())

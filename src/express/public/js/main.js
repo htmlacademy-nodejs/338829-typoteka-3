@@ -363,3 +363,17 @@ function deleteCat(catId) {
   oReq.open("delete", `/categories/${catId}`, true);
   oReq.send();
 }
+
+function deleteComment(commentId, articleId) {
+  const oReq = new XMLHttpRequest();
+  oReq.onload = function() {
+    if (this.status === 404) {
+      return window.location.href = '/login';
+    }
+
+    return window.location.href = '/my/comments';
+  };
+
+  oReq.open("delete", `/my/comments/${commentId}?articleId=${articleId}`, true);
+  oReq.send();
+}

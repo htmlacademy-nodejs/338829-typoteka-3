@@ -5,12 +5,17 @@ mixin getUserName(userData)
     }
   p #{getName(userData)}
 
-mixin getUserAvatar(userData)
+mixin getUserAvatar(userData, className, width, height)
   -
     const getAvatar = (user) => {
       return user.avatar ? `/img/${user.avatar}` : `/img/avatar-5.png`;
     }
-  img(src=getAvatar(userData) alt='аватар пользователя')
+  img(
+    class=className ? className : null
+    width=width ? width : null
+    height=height ? height : null
+    src=getAvatar(userData) alt='аватар пользователя'
+  )
 
 mixin formatDate(date)
   -
