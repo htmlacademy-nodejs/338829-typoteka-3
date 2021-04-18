@@ -8,7 +8,6 @@ module.exports = (key, scheme) => async (req, res, next) => {
     return next();
   } catch (error) {
     const {details = []} = error;
-
     return res
       .status(HttpCode.BAD_REQUEST)
       .json({

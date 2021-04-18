@@ -51,6 +51,9 @@ const createApi = (baseURL, timeout = API_TIMEOUT) => {
     updateArticle: (id, data, accessToken) => {
       return fetch(`/articles/${id}`, {method: `PUT`, data, headers: getAuthHeaders(accessToken)});
     },
+    deleteArticle: (id, accessToken) => {
+      return fetch(`/articles/${id}`, {method: `DELETE`, headers: getAuthHeaders(accessToken)});
+    },
     createComment: (id, data, accessToken) => {
       return fetch(`/articles/${id}/comments`, {method: `POST`, data, headers: getAuthHeaders(accessToken)});
     },

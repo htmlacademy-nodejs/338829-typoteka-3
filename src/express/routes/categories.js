@@ -5,7 +5,6 @@ const multer = require(`multer`);
 const {axiosApi} = require(`../axios-api/axios-api`);
 const {adminRoute, csrfProtection} = require(`../middlewares`);
 const {getErrorMessage} = require(`../../utils`);
-const {HttpCode} = require(`../../constants`);
 
 const upload = multer();
 const categoryRouter = new express.Router();

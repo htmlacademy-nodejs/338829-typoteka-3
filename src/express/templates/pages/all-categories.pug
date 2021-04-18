@@ -11,7 +11,6 @@ block content
     main.main-page.main-page--padding
       section.main-page__category.category
         h1.category__title Категории
-        +errorFormEl(message.name)
         .category__add-form
           form(action='/categories' method='POST')
             input#add-form-add-category(type='text' name='name' placeholder='Новая категория')
@@ -19,6 +18,7 @@ block content
               span.visually-hidden Добавить категорию
             button.category__button.button.button--category(type='submit') Добавить
             input(type='hidden' name='_csrf' value=csrfToken)
+          +errorFormEl(message.name)
         ul.category__list
           each category in categories
             li.category__list-item(style="justify-content: space-between;")

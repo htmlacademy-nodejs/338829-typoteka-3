@@ -11,7 +11,7 @@ const myRouter = new express.Router();
 
 myRouter.use(express.urlencoded({extended: true}));
 
-myRouter.get(`/`, adminRoute, async (req, res, next) => {
+myRouter.get(`/`, [adminRoute, csrfProtection], async (req, res, next) => {
   try {
     const {isAuth, isAdmin, userData} = res.locals.auth;
     const {articles} = await axiosApi.getArticles();
@@ -19,7 +19,8 @@ myRouter.get(`/`, adminRoute, async (req, res, next) => {
       isAuth,
       isAdmin,
       userData,
-      articles
+      articles,
+      csrfToken: req.csrfToken()
     });
   } catch (error) {
     return next(error);
@@ -62,6 +63,24 @@ myRouter.post(`/comments/:commentId`, [adminRoute, upload.none(), csrfProtection
       articles,
       csrfToken: req.csrfToken(),
       message: getErrorMessage(err.response.data.message),
+    });
+  }
+});
+
+myRouter.post(`/:articleId`, [adminRoute, csrfProtection], async (req, res) => {
+  const {articleId} = req.params;
+  const {isAuth, isAdmin, userData, accessToken} = res.locals.auth;
+  try {
+    await axiosApi.deleteArticle(articleId, accessToken);
+    return res.redirect(`/my`);
+  } catch (err) {
+    const {articles} = await axiosApi.getArticles();
+    return res.render(`pages/my`, {
+      isAuth,
+      isAdmin,
+      userData,
+      articles,
+      csrfToken: req.csrfToken()
     });
   }
 });

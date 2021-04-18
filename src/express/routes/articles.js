@@ -4,7 +4,7 @@ const express = require(`express`);
 const {pictureUpload, privateRoute, adminRoute, csrfProtection} = require(`../middlewares`);
 const {HttpCode} = require(`../../constants`);
 const {axiosApi} = require(`../axios-api/axios-api`);
-const {getCategoryArticle, getPictureArticle, getErrorMessage} = require(`../../utils`);
+const {getCategoryArticle, getPictureArticle, getErrorMessage, sortComments} = require(`../../utils`);
 const {LIMIT_PER_PAGE} = require(`../../constants`);
 
 const articlesRouter = new express.Router();
@@ -166,7 +166,10 @@ articlesRouter.get(`/:id`, csrfProtection, async (req, res) => {
       isAuth,
       isAdmin,
       userData,
-      article,
+      article: {
+        ...article,
+        comments: sortComments(article.comments)
+      },
       categories,
       message: {},
       csrfToken: req.csrfToken()

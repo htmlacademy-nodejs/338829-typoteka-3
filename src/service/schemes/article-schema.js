@@ -28,5 +28,6 @@ module.exports = Joi.object({
     .pattern(new RegExp(`(?:jpg|png)`)),
   fullText: Joi
     .string()
+    .allow(null, ``)
     .max(ArticleSchema.FULL_TEXT.MAX)
 });

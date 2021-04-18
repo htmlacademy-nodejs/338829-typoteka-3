@@ -37,8 +37,9 @@ module.exports = Joi.object({
     }),
   confirm_password: Joi
     .string()
-    .required()
+    .min(UserSchema.PASSWORD.MIN)
     .valid(Joi.ref(`password`))
+    .required()
     .messages({
       'any.only': `"confirm_password" ${RegisterMessage.PASSWORDS_NOT_EQUALS}`,
       'any.required': `"confirm_password" ${RegisterMessage.REQUIRED_FIELD}`

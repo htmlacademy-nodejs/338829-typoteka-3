@@ -104,13 +104,20 @@ const ArticleSchema = {
 
 const CommentSchema = {
   TEXT: {
-    MIN: 50
+    MIN: 20
   }
 };
 
 const UserSchema = {
   PASSWORD: {
     MIN: 6
+  }
+};
+
+const CategorySchema = {
+  NAME: {
+    MIN: 5,
+    MAX: 30
   }
 };
 
@@ -132,7 +139,13 @@ const LoginMessage = {
 
 const CommentMessage = {
   EMPTY_VALUE: `Сообщение не может быть пустым, напишите что-нибудь!`,
-  MIN_LENGTH: `Комментарий должен быть не меньше 50 символов`,
+  MIN_LENGTH: `Комментарий должен быть не меньше 20 символов`,
+};
+
+const CategoryMessage = {
+  MIN_LENGTH: `Минимум ${CategorySchema.NAME.MIN} символов`,
+  MAX_LENGTH: `Максимум ${CategorySchema.NAME.MAX} символов`,
+  REQUIRED_FIELD: `Поле обязательно для заполнения`,
 };
 
 const DEFAULT_CLI_COMMAND = CliCommand.HELP;
@@ -174,6 +187,8 @@ module.exports = {
   ArticleSchema,
   CommentSchema,
   UserSchema,
+  CategorySchema,
+  CategoryMessage,
   RegisterMessage,
   LoginMessage,
   CommentMessage

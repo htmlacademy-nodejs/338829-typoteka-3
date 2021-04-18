@@ -48,7 +48,13 @@ class ArticleService {
       });
     }
 
-    const articles = await this._Article.findAll({include});
+    const articles = await this._Article.findAll({
+      include,
+      order: [
+        [`createdAt`, `DESC`]
+      ]
+    });
+
     return {
       count: articles.length,
       articles: articles.map((item) => item.get())
@@ -60,7 +66,10 @@ class ArticleService {
       limit,
       offset,
       include: hasComments ? [Aliase.CATEGORIES, Aliase.COMMENTS] : [Aliase.CATEGORIES],
-      distinct: true
+      distinct: true,
+      order: [
+        [`createdAt`, `DESC`]
+      ]
     });
 
     return {

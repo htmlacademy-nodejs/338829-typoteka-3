@@ -73,12 +73,17 @@ const getErrorMessage = (messages = []) => {
   return errorMessage;
 };
 
+const sortComments = (comments) => {
+  return comments.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
+};
+
 module.exports = {
   getRandomInt,
   shuffle,
   formatDate,
   checkNumParam,
   readContent,
+  sortComments,
   getCategoryArticle,
   getPictureArticle,
   getErrorMessage
