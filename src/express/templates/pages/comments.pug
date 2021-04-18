@@ -21,8 +21,13 @@ block content
                     +formatDate(comment.createdAt)
                 a.publication__item-text(href='/articles/' + article.id) #{article.title}
                 p.publication__text-strong #{comment.text}
-                button.publication__button.button.button--close-item(type='button' onclick='deleteComment(' + comment.id + ',' + article.id + ')')
-                  span.visually-hidden Закрыть строку списка
+                form(action='/my/comments/' + comment.id method="POST")
+                  input(type='hidden' name='articleId' value=article.id)
+                  input(type='hidden' name='_csrf' value=csrfToken)
+                  button.publication__button.button.button--close-item(type='submit')
+                    span.visually-hidden Закрыть строку списка
+                  each error in message
+                    +errorFormEl(error)
     footer.footer.footer--padding
       include ../partials/footer
 

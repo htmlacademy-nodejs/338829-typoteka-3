@@ -66,18 +66,22 @@ categoryRouter.post(`/:categoryId`, [adminRoute, upload.none(), csrfProtection],
   }
 });
 
-categoryRouter.delete(`/:categoryId`, adminRoute, async (req, res) => {
+categoryRouter.post(`/:categoryId/delete`, [adminRoute, upload.none(), csrfProtection], async (req, res) => {
   const {categoryId} = req.params;
-  const {accessToken} = res.locals.auth;
+  const {isAuth, isAdmin, userData, accessToken} = res.locals.auth;
   try {
     await axiosApi.deleteCategory(categoryId, accessToken);
-    return res
-      .status(HttpCode.NO_CONTENT)
-      .send(``);
+    return res.redirect(`/categories`);
   } catch (err) {
-    return res
-      .status(HttpCode.BAD_REQUEST)
-      .send(getErrorMessage(err.response.data.message));
+    const categories = await axiosApi.getCategories();
+    return res.render(`pages/all-categories`, {
+      isAuth,
+      isAdmin,
+      userData,
+      categories,
+      message: getErrorMessage(err.response.data.message),
+      csrfToken: req.csrfToken()
+    });
   }
 });
 

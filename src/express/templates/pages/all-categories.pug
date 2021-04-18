@@ -21,13 +21,15 @@ block content
             input(type='hidden' name='_csrf' value=csrfToken)
         ul.category__list
           each category in categories
-            li.category__list-item
+            li.category__list-item(style="justify-content: space-between;")
               form(action='/categories/' + category.id method='POST')
                 input(id='modify-form-category-' + category.id type='text' name='name' value=category.name)
                 label(for='modify-form-category-' + category.id)
                   span.visually-hidden Редактировать категорию
                 button.category__button.button.button--category(type='submit') Сохранить
-                button.category__button.button.button--category(type='button' onclick='deleteCat(' + category.id + ')') Удалить
+                input(type='hidden' name='_csrf' value=csrfToken)
+              form(action="/categories/" + category.id + "/delete" style="width: 120px;" method='POST')
+                button.category__button.button.button--category(type='submit') Удалить
                 input(type='hidden' name='_csrf' value=csrfToken)
     footer.footer.footer--padding
       include ../partials/footer

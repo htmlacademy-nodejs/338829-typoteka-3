@@ -1,13 +1,15 @@
 'use strict';
+const express = require(`express`);
+const multer = require(`multer`);
 
-const {Router} = require(`express`);
 const {axiosApi} = require(`../axios-api/axios-api`);
-const {adminRoute} = require(`../middlewares`);
-
-const {HttpCode} = require(`../../constants`);
+const {adminRoute, csrfProtection} = require(`../middlewares`);
 const {getErrorMessage} = require(`../../utils`);
 
-const myRouter = new Router();
+const upload = multer();
+const myRouter = new express.Router();
+
+myRouter.use(express.urlencoded({extended: true}));
 
 myRouter.get(`/`, adminRoute, async (req, res, next) => {
   try {
@@ -24,7 +26,7 @@ myRouter.get(`/`, adminRoute, async (req, res, next) => {
   }
 });
 
-myRouter.get(`/comments`, adminRoute, async (req, res, next) => {
+myRouter.get(`/comments`, [adminRoute, csrfProtection], async (req, res, next) => {
   try {
     const {isAuth, isAdmin, userData} = res.locals.auth;
     const {articles} = await axiosApi.getArticles({comments: true});
@@ -32,27 +34,35 @@ myRouter.get(`/comments`, adminRoute, async (req, res, next) => {
       isAuth,
       isAdmin,
       userData,
-      articles
+      articles,
+      csrfToken: req.csrfToken(),
+      message: {}
     });
   } catch (error) {
     return next(error);
   }
 });
 
-myRouter.delete(`/comments/:commentId`, adminRoute, async (req, res) => {
+myRouter.post(`/comments/:commentId`, [adminRoute, upload.none(), csrfProtection], async (req, res) => {
   try {
     const {commentId} = req.params;
-    const {articleId} = req.query;
+    const {articleId} = req.body;
     const {accessToken} = res.locals.auth;
 
     await axiosApi.deleteComment(articleId, commentId, accessToken);
-    return res
-      .status(HttpCode.NO_CONTENT)
-      .send(``);
+    return res.redirect(`/my/comments`);
   } catch (err) {
-    return res
-      .status(HttpCode.BAD_REQUEST)
-      .send(getErrorMessage(err.response.data.message));
+    const {isAuth, isAdmin, userData} = res.locals.auth;
+    const {articles} = await axiosApi.getArticles({comments: true});
+
+    return res.render(`pages/comments`, {
+      isAuth,
+      isAdmin,
+      userData,
+      articles,
+      csrfToken: req.csrfToken(),
+      message: getErrorMessage(err.response.data.message),
+    });
   }
 });
 
