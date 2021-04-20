@@ -2,10 +2,11 @@
 
 const express = require(`express`);
 const helmet = require(`helmet`);
-const routes = require(`../api`);
+
 const createSequelize = require(`../lib/sequelize`);
 const {getLogger} = require(`../lib/logger`);
 const {requestLogger} = require(`../middlewares`);
+const {routes} = require(`../lib/routes`);
 
 const {
   DEFAULT_PORT,

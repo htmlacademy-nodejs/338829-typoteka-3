@@ -1,8 +1,8 @@
 'use strict';
 
 const bcrypt = require(`bcrypt`);
-const defineModels = require(`../models`);
-const Aliase = require(`../models/aliase`);
+const {Aliase} = require(`../models`);
+const defineModels = require(`./define-models`);
 const {BCRYPT_SALT_ROUNDS} = require(`../../constants`);
 
 module.exports = async (sequelize, {categories, articles, users = []}) => {

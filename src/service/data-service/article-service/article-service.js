@@ -1,6 +1,6 @@
 'use strict';
 
-const Aliase = require(`../../models/aliase`);
+const {Aliase} = require(`../../models`);
 
 class ArticleService {
   constructor(sequelize) {

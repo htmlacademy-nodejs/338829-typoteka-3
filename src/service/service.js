@@ -5,7 +5,7 @@ const {
   USER_ARGV_INDEX
 } = require(`../constants`);
 
-const {Cli} = require(`./cli`);
+const Cli = require(`./cli`);
 
 const userArgs = process.argv.slice(USER_ARGV_INDEX);
 const [userCommand] = userArgs;
