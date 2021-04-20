@@ -4,7 +4,7 @@ const multer = require(`multer`);
 
 const {axiosApi} = require(`../axios-api/axios-api`);
 const {adminRoute, csrfProtection} = require(`../middlewares`);
-const {getErrorMessage} = require(`../../utils`);
+const {getErrorMessage, getMyComments} = require(`../../utils`);
 
 const upload = multer();
 const myRouter = new express.Router();
@@ -31,11 +31,13 @@ myRouter.get(`/comments`, [adminRoute, csrfProtection], async (req, res, next) =
   try {
     const {isAuth, isAdmin, userData} = res.locals.auth;
     const {articles} = await axiosApi.getArticles({comments: true});
+
     return res.render(`pages/comments`, {
       isAuth,
       isAdmin,
       userData,
       articles,
+      comments: getMyComments(articles),
       csrfToken: req.csrfToken(),
       message: {}
     });
@@ -61,6 +63,7 @@ myRouter.post(`/comments/:commentId`, [adminRoute, upload.none(), csrfProtection
       isAdmin,
       userData,
       articles,
+      comments: getMyComments(articles),
       csrfToken: req.csrfToken(),
       message: getErrorMessage(err.response.data.message),
     });

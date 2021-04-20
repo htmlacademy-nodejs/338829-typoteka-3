@@ -14,7 +14,7 @@ categoryRouter.use(express.urlencoded({extended: true}));
 categoryRouter.get(`/`, [adminRoute, csrfProtection], async (req, res, next) => {
   const {isAuth, isAdmin, userData} = res.locals.auth;
   try {
-    const categories = await axiosApi.getCategories();
+    const categories = await axiosApi.getCategories({count: true});
     return res.render(`pages/all-categories`, {
       isAuth,
       isAdmin,

@@ -28,9 +28,10 @@ block content
                   span.visually-hidden Редактировать категорию
                 button.category__button.button.button--category(type='submit') Сохранить
                 input(type='hidden' name='_csrf' value=csrfToken)
-              form(action="/categories/" + category.id + "/delete" style="width: 120px;" method='POST')
-                button.category__button.button.button--category(type='submit') Удалить
-                input(type='hidden' name='_csrf' value=csrfToken)
+              if (Number(category.count) === 0)
+                form(action="/categories/" + category.id + "/delete" style="width: 120px;" method='POST')
+                  button.category__button.button.button--category(type='submit') Удалить
+                  input(type='hidden' name='_csrf' value=csrfToken)
     footer.footer.footer--padding
       include ../partials/footer
 

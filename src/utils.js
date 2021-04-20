@@ -73,6 +73,14 @@ const getErrorMessage = (messages = []) => {
   return errorMessage;
 };
 
+const getMyComments = (articles) => {
+  const comments = articles
+    .map((article) => article.comments)
+    .reduce((prev, current) => prev.concat(current), []);
+
+  return sortComments(comments);
+};
+
 const sortComments = (comments) => {
   return comments.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
 };
@@ -86,5 +94,6 @@ module.exports = {
   sortComments,
   getCategoryArticle,
   getPictureArticle,
-  getErrorMessage
+  getErrorMessage,
+  getMyComments
 };

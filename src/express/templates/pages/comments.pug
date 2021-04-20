@@ -11,23 +11,24 @@ block content
       section.main-page__publication.publication
         h1.publication__title Комментарии
         ul.publication__list
-          each article in articles
-            each comment in article.comments
-              li.publication__list-item
-                .publication__header
-                  +getUserAvatar(comment.users, 'publication__list-image', 20, 20)
-                  b.publication__list-name #{comment.users.name} #{comment.users.surname}
-                  time.publication__item-time(datetime=comment.createdAt)
-                    +formatDate(comment.createdAt)
-                a.publication__item-text(href='/articles/' + article.id) #{article.title}
-                p.publication__text-strong #{comment.text}
-                form(action='/my/comments/' + comment.id method="POST")
-                  input(type='hidden' name='articleId' value=article.id)
-                  input(type='hidden' name='_csrf' value=csrfToken)
-                  button.publication__button.button.button--close-item(type='submit')
-                    span.visually-hidden Закрыть строку списка
-                  each error in message
-                    +errorFormEl(error)
+          each comment in comments
+            li.publication__list-item
+              .publication__header
+                +getUserAvatar(comment.users, 'publication__list-image', 20, 20)
+                b.publication__list-name #{comment.users.name} #{comment.users.surname}
+                time.publication__item-time(datetime=comment.createdAt)
+                  +formatDate(comment.createdAt)
+              each article in articles
+                if article.id === comment.articleId
+                  a.publication__item-text(href='/articles/' + article.id) #{article.title}
+              p.publication__text-strong #{comment.text}
+              form(action='/my/comments/' + comment.id method="POST")
+                input(type='hidden' name='articleId' value=comment.articleId)
+                input(type='hidden' name='_csrf' value=csrfToken)
+                button.publication__button.button.button--close-item(type='submit')
+                  span.visually-hidden Закрыть строку списка
+                each error in message
+                  +errorFormEl(error)
     footer.footer.footer--padding
       include ../partials/footer
 
