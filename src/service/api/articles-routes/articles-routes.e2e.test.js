@@ -79,7 +79,7 @@ describe(`READ: API articles`, () => {
   let app;
   let response;
 
-  describe(`correctly`, () => {
+  describe(`correctly - /articles`, () => {
     beforeAll(async () => {
       app = await createApp();
       response = await request(app).get(`/articles`);
@@ -93,8 +93,8 @@ describe(`READ: API articles`, () => {
       expect(response.body.articles.length).toBe(2);
     });
 
-    test(`First Article id equals 1`, () => {
-      expect(response.body.articles[0].id).toBe(1);
+    test(`First Article id equals 2`, () => {
+      expect(response.body.articles[0].id).toBe(2);
     });
   });
 });

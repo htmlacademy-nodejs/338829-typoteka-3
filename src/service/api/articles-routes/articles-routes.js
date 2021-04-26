@@ -1,7 +1,7 @@
 'use strict';
 
 const {Router} = require(`express`);
-const {HttpCode} = require(`../../../constants`);
+const {HttpCode, TOP_LIMIT} = require(`../../../constants`);
 
 const {
   articleExist,
@@ -19,7 +19,7 @@ module.exports = (app, articleService, commentService) => {
 
   route.get(`/`, async (req, res, next) => {
     try {
-      const {comments, limit, offset, catId} = req.query;
+      const {comments, limit, offset, catId, top, lastComments} = req.query;
       const hasComments = Boolean(comments);
 
       let result;
@@ -34,6 +34,22 @@ module.exports = (app, articleService, commentService) => {
         result = await articleService.findPage(limit, offset, hasComments);
       } else {
         result = await articleService.findAll(hasComments);
+      }
+
+      if (typeof top === `string`) {
+        const topRes = await articleService.findTopArticles();
+        result = {
+          ...result,
+          articlesTop: topRes.slice(0, TOP_LIMIT)
+        };
+      }
+
+      if (typeof lastComments === `string`) {
+        const lastCommentsRes = await commentService.findLast();
+        result = {
+          ...result,
+          lastComments: lastCommentsRes.slice(0, TOP_LIMIT)
+        };
       }
 
       return res

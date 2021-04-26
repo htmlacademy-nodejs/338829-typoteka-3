@@ -8,6 +8,7 @@ class ArticleService {
     this._Category = sequelize.models.Category;
     this._ArticleCategory = sequelize.models.ArticleCategory;
     this._Comment = sequelize.models.Comment;
+    this._sequelize = sequelize;
   }
 
   async create(newArticle) {
@@ -126,6 +127,25 @@ class ArticleService {
     }
 
     return this._Article.findByPk(id, {include});
+  }
+
+  async findTopArticles() {
+    const articles = await this._Article.findAll({
+      attributes: [`id`, `announce`, [this._sequelize.fn(`count`, this._sequelize.col(`comments.id`)), `commentCount`]],
+      include: [{
+        model: this._Comment,
+        as: Aliase.COMMENTS,
+        attributes: []
+      }],
+      group: [`Article.id`],
+      order: [
+        [`count`, `DESC`]
+      ]
+    });
+
+    return articles
+      .map((item) => item.get())
+      .filter((item) => item.commentCount > 0);
   }
 }
 

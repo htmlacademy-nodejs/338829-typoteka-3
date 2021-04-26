@@ -30,6 +30,8 @@ const JWT_ACCESS_SECRET = `nesecretjwt`;
 const JWT_REFRESH_SECRET = `nesecretrefreshjwt`;
 const BCRYPT_SALT_ROUNDS = 10;
 
+const TOP_LIMIT = 4;
+
 const SentencesRestrict = {
   MIN: 1,
   MAX: 5,
@@ -175,6 +177,7 @@ module.exports = {
   BCRYPT_SALT_ROUNDS,
   JWT_ACCESS_SECRET,
   JWT_REFRESH_SECRET,
+  TOP_LIMIT,
   SentencesRestrict,
   CommentsRestrict,
   CommentsCount,
