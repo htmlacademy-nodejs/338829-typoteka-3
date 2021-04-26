@@ -1,7 +1,8 @@
 'use strict';
 
 const {Router} = require(`express`);
-const {HttpCode, TOP_LIMIT} = require(`../../../constants`);
+const {HttpCode, TOP_LIMIT, TOP_MAX_TEXT} = require(`../../../constants`);
+const {cutText} = require(`../../../utils`);
 
 const {
   articleExist,
@@ -40,7 +41,7 @@ module.exports = (app, articleService, commentService) => {
         const topRes = await articleService.findTopArticles();
         result = {
           ...result,
-          articlesTop: topRes.slice(0, TOP_LIMIT)
+          articlesTop: cutText(topRes.slice(0, TOP_LIMIT), `announce`, TOP_MAX_TEXT)
         };
       }
 
@@ -48,7 +49,7 @@ module.exports = (app, articleService, commentService) => {
         const lastCommentsRes = await commentService.findLast();
         result = {
           ...result,
-          lastComments: lastCommentsRes.slice(0, TOP_LIMIT)
+          lastComments: cutText(lastCommentsRes.slice(0, TOP_LIMIT), `text`, TOP_MAX_TEXT)
         };
       }
 

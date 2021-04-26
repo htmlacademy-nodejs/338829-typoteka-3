@@ -23,10 +23,10 @@ rootRouter.get(`/`, async (req, res, next) => {
     const offset = (Number(page) - 1) * limit;
 
     const [
-      {count, articles},
+      {count, articles, articlesTop, lastComments},
       categories
     ] = await Promise.all([
-      axiosApi.getArticles({limit, offset, comments: true}),
+      axiosApi.getArticles({limit, offset, comments: true, top: true, lastComments: true}),
       axiosApi.getCategories({count: true})
     ]);
 
@@ -44,6 +44,8 @@ rootRouter.get(`/`, async (req, res, next) => {
       isAdmin,
       userData,
       articles,
+      articlesTop,
+      lastComments,
       categories,
       totalPages,
       page: Number(page)

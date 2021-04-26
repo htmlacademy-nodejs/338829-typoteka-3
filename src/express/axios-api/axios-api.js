@@ -40,8 +40,8 @@ const createApi = (baseURL, timeout = API_TIMEOUT) => {
       return fetch(`/categories/${id}`, {method: `DELETE`, headers: getAuthHeaders(accessToken)});
     },
 
-    getArticles: ({limit, offset, comments = false, catId = -1} = {}) => {
-      return fetch(`/articles`, {params: {limit, offset, comments, catId}});
+    getArticles: ({limit, offset, catId = -1, ...query} = {}) => {
+      return fetch(`/articles`, {params: {limit, offset, catId, ...query}});
     },
     getArticle: ({id, comments = false} = {}) => fetch(`/articles/${id}`, {params: {comments}}),
     getArticleComments: (id) => fetch(`/articles/${id}/comments`),

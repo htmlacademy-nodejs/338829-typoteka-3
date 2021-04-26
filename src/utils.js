@@ -85,6 +85,13 @@ const sortComments = (comments) => {
   return comments.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
 };
 
+const cutText = (items, key, limit) => {
+  return items.map((item) => ({
+    ...item,
+    [key]: item[key].slice(0, limit).trim().concat(`...`)
+  }));
+};
+
 module.exports = {
   getRandomInt,
   shuffle,
@@ -95,5 +102,6 @@ module.exports = {
   getCategoryArticle,
   getPictureArticle,
   getErrorMessage,
-  getMyComments
+  getMyComments,
+  cutText
 };
