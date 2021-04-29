@@ -91,6 +91,17 @@ module.exports = {
       comments
     });
 
-    await initDB(sequelize, {categories, articles});
+    const users = [
+      {
+        "email": `admin@local.localhost`,
+        "name": `Admin`,
+        "surname": `Super`,
+        "avatar": `avatar-5.png`,
+        "password": `111111`,
+        "confirm_password": `111111`
+      }
+    ];
+
+    await initDB(sequelize, {categories, articles, users});
   }
 };

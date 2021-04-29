@@ -9,6 +9,16 @@ module.exports = async (sequelize, {categories, articles, users = []}) => {
   const {Category, Article, User, Comment} = defineModels(sequelize);
   await sequelize.sync({force: true});
 
+  if (users.length) {
+    const promises = users.map(async (user) => {
+      const pwHash = await bcrypt.hash(user.password, BCRYPT_SALT_ROUNDS);
+      return {...user, password: pwHash};
+    });
+
+    const usersBcrypt = await Promise.all(promises);
+    await User.bulkCreate(usersBcrypt);
+  }
+
   const categoryModels = await Category.bulkCreate(categories.map((item) => ({name: item})));
 
   const categoryIdByName = categoryModels.reduce((acc, next) => ({
@@ -29,16 +39,6 @@ module.exports = async (sequelize, {categories, articles, users = []}) => {
         article.categories.map((name) => categoryIdByName[name])
     );
   });
-
-  if (users.length) {
-    const promises = users.map(async (user) => {
-      const pwHash = await bcrypt.hash(user.password, BCRYPT_SALT_ROUNDS);
-      return {...user, password: pwHash};
-    });
-
-    const usersBcrypt = await Promise.all(promises);
-    await User.bulkCreate(usersBcrypt);
-  }
 
   await Promise.all(articlePromises);
 };
