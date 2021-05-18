@@ -108,7 +108,7 @@ const sortComments = (comments) => {
 const cutText = (items, key, limit) => {
   return items.map((item) => ({
     ...item,
-    [key]: item[key].slice(0, limit).trim().concat(`...`)
+    [key]: item[key].length > limit ? item[key].slice(0, limit).trim().concat(`...`) : item[key]
   }));
 };
 
