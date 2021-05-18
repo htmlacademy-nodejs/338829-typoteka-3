@@ -21,6 +21,26 @@ const formatDate = (dateMs) => {
   return new Date(dateMs).toISOString().split(`T`).join(` `).slice(0, 19);
 };
 
+const getDateWithoutTimeZone = (date) => {
+  return new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+};
+
+const convertDateToISO = (dateString) => {
+  const [day, mount, year] = dateString.split(`.`);
+  const date = getDateWithoutTimeZone(new Date(year, mount - 1, day));
+  return date.toISOString();
+};
+
+const convertDateISOtoString = (dateISO) => {
+  return dateISO.slice(0, 10).split(`-`).reverse().join(`.`);
+};
+
+const getDateStringNow = () => {
+  const date = getDateWithoutTimeZone(new Date());
+  const mouth = date.getUTCMonth() + 1;
+  return `${date.getUTCDate()}.${mouth > 9 ? mouth : `0${mouth}`}.${date.getUTCFullYear()}`;
+};
+
 const checkNumParam = (value, defaultValue) => {
   const valueNum = Number.parseInt(value, 10);
   return valueNum && valueNum > 0 ? valueNum : defaultValue;
@@ -96,6 +116,9 @@ module.exports = {
   getRandomInt,
   shuffle,
   formatDate,
+  convertDateToISO,
+  convertDateISOtoString,
+  getDateStringNow,
   checkNumParam,
   readContent,
   sortComments,

@@ -4,7 +4,16 @@ const express = require(`express`);
 const {pictureUpload, privateRoute, adminRoute, csrfProtection} = require(`../middlewares`);
 const {HttpCode} = require(`../../constants`);
 const {axiosApi} = require(`../axios-api/axios-api`);
-const {getCategoryArticle, getPictureArticle, getErrorMessage, sortComments} = require(`../../utils`);
+const {
+  getCategoryArticle,
+  getPictureArticle,
+  getErrorMessage,
+  sortComments,
+  convertDateToISO,
+  convertDateISOtoString,
+  getDateStringNow
+} = require(`../../utils`);
+
 const {LIMIT_PER_PAGE} = require(`../../constants`);
 
 const articlesRouter = new express.Router();
@@ -50,7 +59,8 @@ articlesRouter.get(`/add`, [adminRoute, csrfProtection], async (req, res, next) 
       isAdmin,
       userData,
       newArticle: {
-        categories: []
+        categories: [],
+        createdAt: getDateStringNow()
       },
       categories,
       message: {},
@@ -63,13 +73,12 @@ articlesRouter.get(`/add`, [adminRoute, csrfProtection], async (req, res, next) 
 
 articlesRouter.post(`/add`, [adminRoute, pictureUpload.single(`img`), csrfProtection], async (req, res) => {
   const {body, file} = req;
-
   const newArticle = {
     title: body.title,
     picture: getPictureArticle(file, body),
     announce: body.announce,
     fullText: body.fullText,
-    createdAt: body.date,
+    createdAt: convertDateToISO(body.date),
     categories: getCategoryArticle(body.categories)
   };
 
@@ -83,7 +92,10 @@ articlesRouter.post(`/add`, [adminRoute, pictureUpload.single(`img`), csrfProtec
       isAuth,
       isAdmin,
       userData,
-      newArticle,
+      newArticle: {
+        ...newArticle,
+        createdAt: body.date,
+      },
       categories,
       message: getErrorMessage(err.response.data.message),
       csrfToken: req.csrfToken()
@@ -106,6 +118,7 @@ articlesRouter.get(`/edit/:id`, [adminRoute, csrfProtection], async (req, res) =
       articleId: id,
       editArticle: {
         ...editArticle,
+        createdAt: convertDateISOtoString(editArticle.createdAt),
         categories: editArticle.categories.map((cat) => String(cat.id))
       },
       categories,
@@ -132,7 +145,7 @@ articlesRouter.post(`/edit/:id`, [adminRoute, pictureUpload.single(`img`), csrfP
     picture: getPictureArticle(file, body),
     announce: body.announce,
     fullText: body.fullText,
-    createdAt: body.date,
+    createdAt: convertDateToISO(body.date),
     categories: getCategoryArticle(body.categories)
   };
 
@@ -147,7 +160,10 @@ articlesRouter.post(`/edit/:id`, [adminRoute, pictureUpload.single(`img`), csrfP
       isAdmin,
       userData,
       articleId: id,
-      editArticle,
+      editArticle: {
+        ...editArticle,
+        createdAt: body.date,
+      },
       categories,
       message: getErrorMessage(err.response.data.message),
       csrfToken: req.csrfToken()
