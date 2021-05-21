@@ -49,8 +49,7 @@ const generateArticles = ({count, titles, sentences, categories, comments, userC
       comments,
       articleId: index + 1,
       userCount
-    }),
-    userId: getRandomInt(1, userCount)
+    })
   }));
 };
 
@@ -70,15 +69,15 @@ const writeArticles = async ({articles, users, categories}) => {
     });
 
     const userValues = users.map((user) => {
-      const {email, passwordHash, firstName, lastName, avatar} = user;
-      return `('${email}', '${passwordHash}', '${firstName}', '${lastName}', '${avatar}')`;
+      const {email, name, surname, password, avatar} = user;
+      return `('${email}', '${name}', '${surname}', '${password}', '${avatar}')`;
     });
 
     const categoryValues = categories.map((name) => `('${name}')`);
 
     const articleValues = articles.map((article) => {
-      const {title, announce, fullText, picture, userId} = article;
-      return `('${title}', '${announce}', '${fullText}', '${picture}', ${userId})`;
+      const {title, announce, fullText, picture} = article;
+      return `('${title}', '${announce}', '${fullText}', '${picture}')`;
     });
 
     const articleCategoryValues = articleCategories.map(({articleId, categoryId}) => {
@@ -94,7 +93,7 @@ const writeArticles = async ({articles, users, categories}) => {
 
     const content = (`
 -- Add users
-INSERT INTO users(email, password_hash, first_name, last_name, avatar) VALUES
+INSERT INTO users(email, name, surname, password, avatar) VALUES
 ${insertValues(userValues)};
 
 -- Add categories
@@ -104,23 +103,23 @@ ${insertValues(categoryValues)};
 -- Add articles
 ALTER TABLE articles DISABLE TRIGGER ALL;
 
-INSERT INTO articles(title, announce, full_text, picture, user_id) VALUES
+INSERT INTO articles(title, announce, fullText, picture) VALUES
 ${insertValues(articleValues)};
 
 ALTER TABLE articles ENABLE TRIGGER ALL;
 
 -- Add article categories
-ALTER TABLE article_categories DISABLE TRIGGER ALL;
+ALTER TABLE articleCategories DISABLE TRIGGER ALL;
 
-INSERT INTO article_categories(article_id, category_id) VALUES
+INSERT INTO articleCategories(ArticleId, CategoryId) VALUES
 ${insertValues(articleCategoryValues)};
 
-ALTER TABLE article_categories ENABLE TRIGGER ALL;
+ALTER TABLE articleCategories ENABLE TRIGGER ALL;
 
 -- Add comments
 ALTER TABLE comments DISABLE TRIGGER ALL;
 
-INSERT INTO COMMENTS(text, article_id, user_id) VALUES
+INSERT INTO COMMENTS(text, articleId, userId) VALUES
 ${insertValues(commentValues)};
 
 ALTER TABLE comments ENABLE TRIGGER ALL;
@@ -150,17 +149,17 @@ module.exports = {
     const users = [
       {
         email: `admin@example.com`,
-        passwordHash: `5f4dcc3b5aa765d61d8327deb882cf99`,
-        firstName: `Super`,
-        lastName: `Admin`,
-        avatar: `avatar-5.png`
+        name: `Super`,
+        surname: `Admin`,
+        password: `5f4dcc3b5aa765d61d8327deb882cf99`,
+        avatar: `avatar-1.png`
       },
       {
         email: `petrov@example.com`,
-        passwordHash: `5f4dcc3b5aa765d61d8327deb882cf99`,
-        firstName: `Пётр`,
-        lastName: `Петров`,
-        avatar: `avatar-1.png`
+        name: `Пётр`,
+        surname: `Петров`,
+        password: `5f4dcc3b5aa765d61d8327deb882cf99`,
+        avatar: `avatar-3.png`
       }
     ];
 
