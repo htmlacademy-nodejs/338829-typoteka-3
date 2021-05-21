@@ -44,7 +44,7 @@ block content
                         | Обзор
                   +errorFormEl(message.picture)
                   each category in categories
-                    .new-publication__checkbox.new-publication__checkbox--auto
+                    .new-publication__checkbox.new-publication__checkbox--auto(style="padding: 14px 0;")
                       input(
                         id='checkbox-auto' + category.id
                         type='checkbox'
