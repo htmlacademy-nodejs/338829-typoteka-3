@@ -55,6 +55,8 @@ const generateArticles = ({count, titles, sentences, categories, comments, userC
 
 const writeArticles = async ({articles, users, categories}) => {
   try {
+    const date = new Date().toISOString();
+
     const comments = articles.flatMap((article) => article.comments);
 
     const articleCategories = [];
@@ -70,40 +72,40 @@ const writeArticles = async ({articles, users, categories}) => {
 
     const userValues = users.map((user) => {
       const {email, name, surname, password, avatar} = user;
-      return `('${email}', '${name}', '${surname}', '${password}', '${avatar}')`;
+      return `('${email}', '${name}', '${surname}', '${password}', '${avatar}', '${date}', '${date}')`;
     });
 
-    const categoryValues = categories.map((name) => `('${name}')`);
+    const categoryValues = categories.map((name) => `('${name}', '${date}', '${date}')`);
 
     const articleValues = articles.map((article) => {
       const {title, announce, fullText, picture} = article;
-      return `('${title}', '${announce}', '${fullText}', '${picture}')`;
+      return `('${title}', '${announce}', '${fullText}', '${picture}', '${date}', '${date}')`;
     });
 
     const articleCategoryValues = articleCategories.map(({articleId, categoryId}) => {
-      return `(${articleId}, ${categoryId})`;
+      return `('${date}', '${date}', ${articleId}, ${categoryId})`;
     });
 
     const commentValues = comments.map((comment) => {
       const {text, articleId, userId} = comment;
-      return `('${text}', ${articleId}, ${userId})`;
+      return `('${text}', '${date}', '${date}', ${articleId}, ${userId})`;
     });
 
     const insertValues = (values) => values.join(`,\n`);
 
     const content = (`
 -- Add users
-INSERT INTO users(email, name, surname, password, avatar) VALUES
+INSERT INTO users(email, name, surname, password, avatar, createdAt, updatedAt) VALUES
 ${insertValues(userValues)};
 
 -- Add categories
-INSERT INTO categories(name) VALUES
+INSERT INTO categories(name, createdAt, updatedAt) VALUES
 ${insertValues(categoryValues)};
 
 -- Add articles
 ALTER TABLE articles DISABLE TRIGGER ALL;
 
-INSERT INTO articles(title, announce, fullText, picture) VALUES
+INSERT INTO articles(title, announce, fullText, picture, createdAt, updatedAt) VALUES
 ${insertValues(articleValues)};
 
 ALTER TABLE articles ENABLE TRIGGER ALL;
@@ -111,7 +113,7 @@ ALTER TABLE articles ENABLE TRIGGER ALL;
 -- Add article categories
 ALTER TABLE articleCategories DISABLE TRIGGER ALL;
 
-INSERT INTO articleCategories(ArticleId, CategoryId) VALUES
+INSERT INTO articleCategories(createdAt, updatedAt, ArticleId, CategoryId) VALUES
 ${insertValues(articleCategoryValues)};
 
 ALTER TABLE articleCategories ENABLE TRIGGER ALL;
@@ -119,7 +121,7 @@ ALTER TABLE articleCategories ENABLE TRIGGER ALL;
 -- Add comments
 ALTER TABLE comments DISABLE TRIGGER ALL;
 
-INSERT INTO COMMENTS(text, articleId, userId) VALUES
+INSERT INTO comments(text, createdAt, updatedAt, articleId, userId) VALUES
 ${insertValues(commentValues)};
 
 ALTER TABLE comments ENABLE TRIGGER ALL;
