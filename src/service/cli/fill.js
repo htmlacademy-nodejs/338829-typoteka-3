@@ -56,7 +56,6 @@ const generateArticles = ({count, titles, sentences, categories, comments, userC
 const writeArticles = async ({articles, users, categories}) => {
   try {
     const date = new Date().toISOString();
-    console.log(date);
 
     const comments = articles.flatMap((article) => article.comments);
 
