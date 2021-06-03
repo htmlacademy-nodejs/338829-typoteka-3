@@ -95,36 +95,36 @@ const writeArticles = async ({articles, users, categories}) => {
 
     const content = (`
 -- Add users
-INSERT INTO users(email, name, surname, password, avatar, createdAt, updatedAt) VALUES
+INSERT INTO "users" ("email", "name", "surname", "password", "avatar", "createdAt", "updatedAt") VALUES
 ${insertValues(userValues)};
 
 -- Add categories
-INSERT INTO categories(name, createdAt, updatedAt) VALUES
+INSERT INTO "categories" ("name", "createdAt", "updatedAt") VALUES
 ${insertValues(categoryValues)};
 
 -- Add articles
-ALTER TABLE articles DISABLE TRIGGER ALL;
+ALTER TABLE "articles" DISABLE TRIGGER ALL;
 
-INSERT INTO articles(title, announce, fullText, picture, createdAt, updatedAt) VALUES
+INSERT INTO "articles" ("title", "announce", "fullText", "picture", "createdAt", "updatedAt") VALUES
 ${insertValues(articleValues)};
 
-ALTER TABLE articles ENABLE TRIGGER ALL;
+ALTER TABLE "articles" ENABLE TRIGGER ALL;
 
 -- Add article categories
-ALTER TABLE articleCategories DISABLE TRIGGER ALL;
+ALTER TABLE "articleCategories" DISABLE TRIGGER ALL;
 
-INSERT INTO articleCategories(createdAt, updatedAt, ArticleId, CategoryId) VALUES
+INSERT INTO "articleCategories" ("createdAt", "updatedAt", "ArticleId", "CategoryId") VALUES
 ${insertValues(articleCategoryValues)};
 
-ALTER TABLE articleCategories ENABLE TRIGGER ALL;
+ALTER TABLE "articleCategories" ENABLE TRIGGER ALL;
 
 -- Add comments
-ALTER TABLE comments DISABLE TRIGGER ALL;
+ALTER TABLE "comments" DISABLE TRIGGER ALL;
 
-INSERT INTO comments(text, createdAt, updatedAt, articleId, userId) VALUES
+INSERT INTO "comments" ("text", "createdAt", "updatedAt", "articleId", "userId") VALUES
 ${insertValues(commentValues)};
 
-ALTER TABLE comments ENABLE TRIGGER ALL;
+ALTER TABLE "comments" ENABLE TRIGGER ALL;
 -- end
     `).trim();
 
@@ -150,11 +150,11 @@ module.exports = {
 
     const users = [
       {
-        email: `admin@example.com`,
-        name: `Super`,
-        surname: `Admin`,
+        email: `ivanov@example.com`,
+        name: `Ivan`,
+        surname: `Ivanov`,
         password: `5f4dcc3b5aa765d61d8327deb882cf99`,
-        avatar: `avatar-1.png`
+        avatar: `avatar-2.png`
       },
       {
         email: `petrov@example.com`,
