@@ -39,6 +39,7 @@ articlesRouter.get(`/category/:id`, async (req, res, next) => {
       isAuth,
       isAdmin,
       userData,
+      currentCategory: categories.find((cat) => cat.id === catId),
       categories,
       catId,
       articles,
