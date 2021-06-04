@@ -18,7 +18,7 @@ block content
         a.header__enter(href='/login') Вход с паролем
       a.header__search.button.button--search(href='/search' aria-label='поиск по сайту')
     main.articles-category
-      h1 Бизнес
+      h1 #{currentCategory.name}
       section.articles-category__theme-list
         h2.visually-hidden Список тем
         ul.themes
